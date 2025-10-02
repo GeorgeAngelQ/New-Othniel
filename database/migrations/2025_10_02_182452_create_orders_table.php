@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id('id_order');
-            $table->foreignId('id_user')->constrained('users');
+            $table->foreignId('id_user')->constrained('users','id_user');
             $table->date('date');
             $table->decimal('total', 10, 2);
             $table->string('status');

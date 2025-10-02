@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('cart_details', function (Blueprint $table) {
             $table->id('id_cart_detail');
-            $table->foreignId('id_cart')->constrained('carts');
-            $table->foreignId('id_product')->constrained('products');
+            $table->foreignId('id_cart')->constrained('carts','id_cart');
+            $table->foreignId('id_product')->constrained('products','id_product');
             $table->integer('quantity');
             $table->decimal('subtotal', 8, 2);
             $table->timestamps();
