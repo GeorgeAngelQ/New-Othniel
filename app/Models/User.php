@@ -14,10 +14,10 @@ class User extends Model
         'password',
         'role'
     ];
-    public function cart(){
-        return $this->hasMany(Cart::class,'id_user');
+    public function carts(){
+        return $this->hasMany(Cart::class,'id_user','id_user');
     }
-    public function order(){
-        return $this->hasMany(Order::class,'id_user');
+    public function orders(){
+        return $this->hasMany(Order::class,'id_user','id_user');
     }
 }
