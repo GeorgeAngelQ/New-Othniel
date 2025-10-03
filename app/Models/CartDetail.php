@@ -9,12 +9,15 @@ class CartDetail extends Model
 {
     use HasFactory;
     protected $fillable =[
-
+        'id_cart',
+        'id_product',
+        'quantity',
+        'subtotal'
     ];
     public function cart(){
-        return $this->belongsTo(Cart::class);
+        return $this->belongsTo(Cart::class,'id_cart');
     }
     public function product(){
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class,'id_product');
     }
 }

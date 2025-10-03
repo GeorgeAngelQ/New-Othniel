@@ -3,27 +3,19 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory()
-            ->count(10)
-            ->hasCart(1)
-            ->hasOrder(4)
-            ->create();
-        User::factory()
-            ->count(34)
-            ->hasCart(1)
-            ->hasOrder(2)
-            ->create();
-        User::factory()
-            ->count(20)
-            ->hasOrder(4)
-            ->create();
-        User::factory()
-            ->count(12)
-            ->create();
+        User::factory()->create([
+            'name' => 'admin',
+            'email' => 'admin@shop.com',
+            'role' => 'admin',
+            'password' => Hash::make('admin')
+        ]);
+
+        User::factory(20)->create(['role' => 'user']);
     }
 }

@@ -9,9 +9,13 @@ class Payment extends Model
 {
     use HasFactory;
     protected $fillable =[
-
+        'id_order',
+        'payment_method',
+        'reference_transaction',
+        'amount',
+        'status'
     ];
     public function order(){
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class, 'id_order');
     }
 }

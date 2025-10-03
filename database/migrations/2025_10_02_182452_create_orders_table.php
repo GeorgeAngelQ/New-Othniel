@@ -14,7 +14,7 @@ return new class extends Migration
             $table->date('date');
             $table->decimal('total', 10, 2);
             $table->string('status');
-            $table->string('payment_method');
+            $table->string('payment_method')->nullable();
             $table->timestamps();
         });
     }

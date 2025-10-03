@@ -2,16 +2,18 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Order;
 
 class OrderSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        User::where('role', 'user')->get()->each(function ($user) {
+            Order::factory(2)->create([
+                'id_user' => $user->id_user,
+            ]);
+        });
     }
 }
