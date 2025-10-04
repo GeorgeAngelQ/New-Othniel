@@ -2,65 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use App\Filters\CartFilter;
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Requests\UpdateCartRequest;
+use App\Http\Resources\CartCollection;
 use App\Models\Cart;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $filter = new CartFilter();
+        $queryItems = $filter->transform($request);
+        $includeUsers = $request->query('includeUsers');
+        $includeCartDetails = $request->query('includeCartDetails');
+        $carts = Cart::where($queryItems);
+        if ($includeUsers) {
+            $carts = $carts->with('users');
+        }
+        if ($includeCartDetails) {
+            $carts = $carts->with('cartDetails');
+        }
+        return new CartCollection($carts->paginate()->appends($request->query()));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    }
     public function store(StoreCartRequest $request)
     {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
+    }
     public function show(Cart $cart)
     {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    }
     public function edit(Cart $cart)
     {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    }
     public function update(UpdateCartRequest $request, Cart $cart)
     {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    }
     public function destroy(Cart $cart)
     {
-        //
+
     }
 }
