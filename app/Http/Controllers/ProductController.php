@@ -15,8 +15,12 @@ class ProductController extends Controller
     {
         $filter = new ProductFilter();
         $queryItems = $filter->transform($request);
-        $users = Product::where($queryItems);
-        return new ProductCollection($users->paginate()->appends($request->query()));
+        $includeOrderDetails = $request->query('includeOrderDetails');
+        $products = Product::where($queryItems);    
+        if ($includeOrderDetails) {
+            $products = $products->with('orderDetails');
+        }
+        return new ProductCollection($products->paginate()->appends($request->query()));
     }
     public function create()
     {

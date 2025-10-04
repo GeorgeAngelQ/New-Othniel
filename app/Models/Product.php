@@ -15,10 +15,10 @@ class Product extends Model
         'stock',
         'image_url'
     ];
-    public function orderDetail(){
-        return $this->hasMany(OrderDetail::class,'id_product');
+    public function orderDetails(){
+        return $this->hasMany(OrderDetail::class,'id_product','id_product');
     }
-    public function cartDetail(){
-        return $this->hasMany(CartDetail::class,'id_product');
+    public function cartDetails(){
+        return $this->hasMany(CartDetail::class,'id_product','id_product');
     }
 }

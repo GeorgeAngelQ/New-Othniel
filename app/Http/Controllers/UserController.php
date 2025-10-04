@@ -19,9 +19,13 @@ class UserController extends Controller
         $filter = new UserFilter();
         $queryItems = $filter->transform($request);
         $includeCarts = $request->query('includeCarts');
+        $includeOrders = $request->query('includeOrder');
         $users = User::where($queryItems);
         if ($includeCarts) {
             $users = $users->with('carts');
+        }
+        if ($includeOrders) {
+            $users = $users->with('orders');
         }
         return new UserCollection($users->paginate()->appends($request->query()));
     }
