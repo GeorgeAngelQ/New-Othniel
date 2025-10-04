@@ -9,14 +9,15 @@ class ProductFilter extends ApiFilter{
         'name' => ['eq'],
         'email' => ['eq'],
         'description' => ['eq'],
-        'price' => ['eq', 'lt', 'gt','lte','gte'],
-        'stock' => ['eq', 'lt', 'gt','lte','gte'],
-        'image_url' => ['eq'],
-        'created_at' => ['eq', 'lt', 'gt','lte','gte'],
+        'price' => ['eq','lt', 'gt','lte','gte'],
+        'stock' => ['eq','lt', 'gt','lte','gte'],
+        'imageUrl' => ['eq'],
+        'createdAt' => ['eq', 'lt', 'gt','lte','gte'],
     ];
 
     protected $columnMap = [
-        'created_at' => 'createdAt',
+        'image_url' => 'imageUrl',
+        'created_at' => 'createdAt'
     ];
 
     protected $operatorMap = [
