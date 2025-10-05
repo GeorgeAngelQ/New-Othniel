@@ -31,8 +31,12 @@ class ProductController extends Controller
     {
 
     }
-    public function show(Product $product)
+    public function show(Request $request, Product $product)
     {
+        $includeOrderDetails = $request->query('includeOrderDetails');
+        if ($includeOrderDetails) {
+            $product->load('orderDetails');
+        }
         return new ProductResource($product);
     }
     public function edit(Product $product)
