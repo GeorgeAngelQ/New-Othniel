@@ -8,10 +8,13 @@ use App\Http\Resources\ProductCollection;
 use App\Models\Product;
 use App\Filters\ProductFilter;
 use App\Http\Resources\ProductResource;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    use ApiResponseTrait;
+
     public function index(Request $request)
     {
         $filter = new ProductFilter();
@@ -22,12 +25,7 @@ class ProductController extends Controller
             $products = $products->with('orderDetails');
         }
         $data = new ProductCollection($products->paginate()->appends($request->query()));
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Products retrieved successfully',
-            'data' => $data,
-            'error' => null
-        ], 200);
+        return $this->successResponse($data, 'Products retrieved successfully');
     }
     public function create()
     {
@@ -44,12 +42,7 @@ class ProductController extends Controller
             $product->load('orderDetails');
         }
         $data = new ProductResource($product);
-        return response()->json([
-        'status' => 'success',
-        'message' => 'Product retrieved successfully',
-        'data' => $data,
-        'error' => null
-        ], 200);
+        return $this->successResponse($data, 'Product retrieved successfully');
     }
     public function edit(Product $product)
     {

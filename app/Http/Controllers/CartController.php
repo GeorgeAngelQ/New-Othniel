@@ -8,10 +8,13 @@ use App\Http\Requests\UpdateCartRequest;
 use App\Http\Resources\CartCollection;
 use App\Http\Resources\CartResource;
 use App\Models\Cart;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    use ApiResponseTrait;
+
     public function index(Request $request)
     {
         $filter = new CartFilter();
@@ -26,12 +29,7 @@ class CartController extends Controller
             $carts = $carts->with('cartDetails');
         }
         $data = new CartCollection($carts->paginate()->appends($request->query()));
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Carts retrieved successfully',
-            'data' => $data,
-            'error' => null
-        ], 200);
+        return $this->successResponse($data, 'Carts retrieved successfully');
     }
     public function create()
     {
@@ -52,12 +50,7 @@ class CartController extends Controller
             $cart->load('cartDetails');
         }
         $data = new CartResource($cart);
-        return response()->json([
-        'status' => 'success',
-        'message' => 'Cart retrieved successfully',
-        'data' => $data,
-        'error' => null
-        ], 200);
+        return $this->successResponse($data, 'Cart retrieved successfully');
     }
     public function edit(Cart $cart)
     {

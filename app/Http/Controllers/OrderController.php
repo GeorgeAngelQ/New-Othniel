@@ -9,9 +9,12 @@ use App\Http\Resources\OrderCollection;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Traits\ApiResponseTrait;
 
 class OrderController extends Controller
 {
+    use ApiResponseTrait;
+
     public function index(Request $request)
     {
         $filter = new OrderFilter();
@@ -26,12 +29,7 @@ class OrderController extends Controller
             $orders = $orders->with('orderDetails');
         }
         $data = new OrderCollection($orders->paginate()->appends($request->query()));
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Orders retrieved successfully',
-            'data' => $data,
-            'error' => null
-        ], 200);
+        return $this->successResponse($data, 'Orders retrieved successfully');
     }
     public function create()
     {
@@ -52,12 +50,7 @@ class OrderController extends Controller
             $order->load('orderDetails');
         }
         $data = new OrderResource($order);
-        return response()->json([
-        'status' => 'success',
-        'message' => 'Order retrieved successfully',
-        'data' => $data,
-        'error' => null
-        ], 200);
+        return $this->successResponse($data, 'Order retrieved successfully');
     }
     public function edit(Order $order)
     {
