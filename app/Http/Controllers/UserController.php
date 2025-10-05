@@ -9,9 +9,12 @@ use App\Filters\UserFilter;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Traits\ApiResponseTrait;
 
 class UserController extends Controller
 {
+    use ApiResponseTrait;
+
     public function index(Request $request)
     {
         $filter = new UserFilter();
@@ -26,12 +29,7 @@ class UserController extends Controller
             $users = $users->with('orders');
         }
         $data = new UserCollection($users->paginate()->appends($request->query()));
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Users retrieved successfully',
-            'data' => $data,
-            'error' => null
-        ], 200);
+        return $this->successResponse($data, 'Users retrieved successfully');
     }
     public function create()
     {
@@ -52,12 +50,7 @@ class UserController extends Controller
             $user->load('orders');
         }
         $data = new UserResource($user);
-        return response()->json([
-        'status' => 'success',
-        'message' => 'User retrieved successfully',
-        'data' => $data,
-        'error' => null
-        ], 200);
+        return $this->successResponse($data, 'User retrieved successfully');
     }
     public function edit(User $user)
     {
