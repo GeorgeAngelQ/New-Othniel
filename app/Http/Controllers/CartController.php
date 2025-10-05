@@ -35,8 +35,16 @@ class CartController extends Controller
     {
 
     }
-    public function show(Cart $cart)
+    public function show(Request $request, Cart $cart)
     {
+        $includeUsers = $request->query('includeUsers');
+        $includeCartDetails = $request->query('includeCartDetails');
+        if ($includeUsers) {
+            $cart->load('users');
+        }
+        if ($includeCartDetails) {
+            $cart->load('cartDetails');
+        }
         return new CartResource($cart);
     }
     public function edit(Cart $cart)
