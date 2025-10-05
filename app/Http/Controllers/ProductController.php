@@ -21,7 +21,13 @@ class ProductController extends Controller
         if ($includeOrderDetails) {
             $products = $products->with('orderDetails');
         }
-        return new ProductCollection($products->paginate()->appends($request->query()));
+        $data = new ProductCollection($products->paginate()->appends($request->query()));
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Products retrieved successfully',
+            'data' => $data,
+            'error' => null
+        ], 200);
     }
     public function create()
     {
@@ -37,7 +43,13 @@ class ProductController extends Controller
         if ($includeOrderDetails) {
             $product->load('orderDetails');
         }
-        return new ProductResource($product);
+        $data = new ProductResource($product);
+        return response()->json([
+        'status' => 'success',
+        'message' => 'Product retrieved successfully',
+        'data' => $data,
+        'error' => null
+        ], 200);
     }
     public function edit(Product $product)
     {

@@ -25,7 +25,13 @@ class CartController extends Controller
         if ($includeCartDetails) {
             $carts = $carts->with('cartDetails');
         }
-        return new CartCollection($carts->paginate()->appends($request->query()));
+        $data = new CartCollection($carts->paginate()->appends($request->query()));
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Carts retrieved successfully',
+            'data' => $data,
+            'error' => null
+        ], 200);
     }
     public function create()
     {
@@ -45,7 +51,13 @@ class CartController extends Controller
         if ($includeCartDetails) {
             $cart->load('cartDetails');
         }
-        return new CartResource($cart);
+        $data = new CartResource($cart);
+        return response()->json([
+        'status' => 'success',
+        'message' => 'Cart retrieved successfully',
+        'data' => $data,
+        'error' => null
+        ], 200);
     }
     public function edit(Cart $cart)
     {

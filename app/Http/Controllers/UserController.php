@@ -25,7 +25,13 @@ class UserController extends Controller
         if ($includeOrders) {
             $users = $users->with('orders');
         }
-        return new UserCollection($users->paginate()->appends($request->query()));
+        $data = new UserCollection($users->paginate()->appends($request->query()));
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Users retrieved successfully',
+            'data' => $data,
+            'error' => null
+        ], 200);
     }
     public function create()
     {
@@ -45,7 +51,13 @@ class UserController extends Controller
         if ($includeOrders) {
             $user->load('orders');
         }
-        return new UserResource($user);
+        $data = new UserResource($user);
+        return response()->json([
+        'status' => 'success',
+        'message' => 'User retrieved successfully',
+        'data' => $data,
+        'error' => null
+        ], 200);
     }
     public function edit(User $user)
     {

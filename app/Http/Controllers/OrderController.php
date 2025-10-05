@@ -25,7 +25,13 @@ class OrderController extends Controller
         if ($includeOrderDetails) {
             $orders = $orders->with('orderDetails');
         }
-        return new OrderCollection($orders->paginate()->appends($request->query()));
+        $data = new OrderCollection($orders->paginate()->appends($request->query()));
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Orders retrieved successfully',
+            'data' => $data,
+            'error' => null
+        ], 200);
     }
     public function create()
     {
@@ -45,7 +51,13 @@ class OrderController extends Controller
         if ($includeOrderDetails) {
             $order->load('orderDetails');
         }
-        return new OrderResource($order);
+        $data = new OrderResource($order);
+        return response()->json([
+        'status' => 'success',
+        'message' => 'Order retrieved successfully',
+        'data' => $data,
+        'error' => null
+        ], 200);
     }
     public function edit(Order $order)
     {
