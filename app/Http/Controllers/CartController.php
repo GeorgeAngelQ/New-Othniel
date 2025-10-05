@@ -6,6 +6,7 @@ use App\Filters\CartFilter;
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Requests\UpdateCartRequest;
 use App\Http\Resources\CartCollection;
+use App\Http\Resources\CartResource;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 
@@ -36,7 +37,7 @@ class CartController extends Controller
     }
     public function show(Cart $cart)
     {
-
+        return new CartResource($cart);
     }
     public function edit(Cart $cart)
     {
