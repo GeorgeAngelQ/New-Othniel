@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductCollection;
 use App\Models\Product;
 use App\Filters\ProductFilter;
+use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -16,7 +17,7 @@ class ProductController extends Controller
         $filter = new ProductFilter();
         $queryItems = $filter->transform($request);
         $includeOrderDetails = $request->query('includeOrderDetails');
-        $products = Product::where($queryItems);    
+        $products = Product::where($queryItems);
         if ($includeOrderDetails) {
             $products = $products->with('orderDetails');
         }
@@ -32,7 +33,7 @@ class ProductController extends Controller
     }
     public function show(Product $product)
     {
-
+        return new ProductResource($product);
     }
     public function edit(Product $product)
     {
