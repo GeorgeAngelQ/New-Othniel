@@ -17,7 +17,7 @@ class UserController extends Controller
         $filter = new UserFilter();
         $queryItems = $filter->transform($request);
         $includeCarts = $request->query('includeCarts');
-        $includeOrders = $request->query('includeOrder');
+        $includeOrders = $request->query('includeOrders');
         $users = User::where($queryItems);
         if ($includeCarts) {
             $users = $users->with('carts');

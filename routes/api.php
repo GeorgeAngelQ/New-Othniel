@@ -11,4 +11,5 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers'], function
     Route::apiResource('products', ProductController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('carts', CartController::class);
+    Route::apiResource('orders', OrderController::class);
 });
