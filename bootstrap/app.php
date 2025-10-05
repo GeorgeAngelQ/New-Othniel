@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\QueryException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -60,6 +63,39 @@ return Application::configure(basePath: dirname(__DIR__))
                     'data' => null,
                     'error' => $e->errors(),
                 ], 422);
+            }
+        });
+
+        $exceptions->render(function (AuthorizationException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Forbidden',
+                    'data' => null,
+                    'error' => $e->getMessage(),
+                ], 403);
+            }
+        });
+
+        $exceptions->render(function (QueryException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Database error',
+                    'data' => null,
+                    'error' => config('app.debug') ? $e->getMessage() : 'Error executing query',
+                ], 500);
+            }
+        });
+
+        $exceptions->render(function (MethodNotAllowedHttpException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Method Not Allowed',
+                    'data' => null,
+                    'error' => $e->getMessage(),
+                ], 405);
             }
         });
 
