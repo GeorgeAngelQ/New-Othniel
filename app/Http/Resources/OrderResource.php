@@ -18,6 +18,8 @@ class OrderResource extends JsonResource
             'payment_method' => $this->payment_method,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'user' => new UserResource($this->whenLoaded('users')),
+            'order_details' => OrderDetailResource::collection($this->whenLoaded('orderDetails')),
         ];
     }
 }

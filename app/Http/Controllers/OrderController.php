@@ -35,8 +35,16 @@ class OrderController extends Controller
     {
 
     }
-    public function show(Order $order)
+    public function show(Request $request, Order $order)
     {
+        $includeUsers = $request->query('includeUsers');
+        $includeOrderDetails = $request->query('includeOrderDetails');
+        if ($includeUsers) {
+            $order->load('users');
+        }
+        if ($includeOrderDetails) {
+            $order->load('orderDetails');
+        }
         return new OrderResource($order);
     }
     public function edit(Order $order)
