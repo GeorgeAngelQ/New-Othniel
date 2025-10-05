@@ -35,8 +35,16 @@ class UserController extends Controller
     {
 
     }
-    public function show(User $user)
+    public function show(Request $request, User $user)
     {
+        $includeCarts = $request->query('includeCarts');
+        $includeOrders = $request->query('includeOrders');
+        if ($includeCarts) {
+            $user->load('carts');
+        }
+        if ($includeOrders) {
+            $user->load('orders');
+        }
         return new UserResource($user);
     }
     public function edit(User $user)
