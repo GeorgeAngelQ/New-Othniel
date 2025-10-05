@@ -6,6 +6,7 @@ use App\Filters\OrderFilter;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Http\Resources\OrderCollection;
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -36,7 +37,7 @@ class OrderController extends Controller
     }
     public function show(Order $order)
     {
-
+        return new OrderResource($order);
     }
     public function edit(Order $order)
     {
