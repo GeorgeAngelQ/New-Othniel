@@ -37,7 +37,8 @@ class CartController extends Controller
     }
     public function store(StoreCartRequest $request)
     {
-
+        $cart = Cart::create($request->validated());
+        return $this->successResponse($cart, 'Cart created successfully', 201);
     }
     public function show(Request $request, Cart $cart)
     {

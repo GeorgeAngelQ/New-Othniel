@@ -37,7 +37,8 @@ class UserController extends Controller
     }
     public function store(StoreUserRequest $request)
     {
-
+        $user = User::create($request->validated());
+        return $this->successResponse($user, 'User created successfully', 201);
     }
     public function show(Request $request, User $user)
     {

@@ -37,7 +37,8 @@ class OrderController extends Controller
     }
     public function store(StoreOrderRequest $request)
     {
-
+        $order = Order::create($request->validated());
+        return $this->successResponse($order, 'Order created successfully', 201);
     }
     public function show(Request $request, Order $order)
     {
