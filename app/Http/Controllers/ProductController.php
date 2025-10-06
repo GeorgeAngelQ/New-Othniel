@@ -33,7 +33,8 @@ class ProductController extends Controller
     }
     public function store(StoreProductRequest $request)
     {
-
+        $product = Product::create($request->validated());
+        return $this->successResponse($product, 'Product created successfully', 201);
     }
     public function show(Request $request, Product $product)
     {
