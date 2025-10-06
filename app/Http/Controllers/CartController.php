@@ -59,7 +59,8 @@ class CartController extends Controller
     }
     public function update(UpdateCartRequest $request, Cart $cart)
     {
-
+        $cart->update($request->validated());
+        return $this->successResponse($cart, 'Cart updated successfully');
     }
     public function destroy(Cart $cart)
     {

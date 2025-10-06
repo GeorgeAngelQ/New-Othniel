@@ -10,6 +10,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -59,7 +60,12 @@ class UserController extends Controller
     }
     public function update(UpdateUserRequest $request, User $user)
     {
-
+        $data = $request->validated();
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        }
+        $user->update($data);
+        return $this->successResponse($user, 'Usuario actualizado correctamente');
     }
     public function destroy(User $user)
     {

@@ -6,23 +6,40 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCartRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        $id_cart = $this->route('cart');
+        $isPatch = $this->method() === 'PATCH';
         return [
-            //
+            'id_user' => [
+                $isPatch ? 'sometimes' : 'required',
+                'exists:users,id_user',
+                'integer'
+            ],
+            'total' => [
+                $isPatch ? 'sometimes' : 'required',
+                'decimal:0,2',
+                'min:0'
+            ],
+            'status' => [
+                $isPatch ? 'sometimes' : 'required',
+                'string',
+                'max:50'
+            ],
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'id_user.exists' => 'The selected user does not exist.',
+            'total.decimal' => 'The total must be a decimal number with up to 2 decimal places.',
+            'total.min' => 'The total must be at least 0.',
+            'status.string' => 'The status must be a string.',
+            'status.max' => 'The status may not be greater than 50 characters.',
         ];
     }
 }

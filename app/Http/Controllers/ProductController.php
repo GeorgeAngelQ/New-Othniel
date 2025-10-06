@@ -51,7 +51,8 @@ class ProductController extends Controller
     }
     public function update(UpdateProductRequest $request, Product $product)
     {
-
+        $product->update($request->validated());
+        return $this->successResponse($product, 'Product updated successfully');
     }
     public function destroy(Product $product)
     {

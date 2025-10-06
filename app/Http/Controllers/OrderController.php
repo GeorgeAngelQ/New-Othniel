@@ -59,7 +59,8 @@ class OrderController extends Controller
     }
     public function update(UpdateOrderRequest $request, Order $order)
     {
-
+        $order->update($request->validated());
+        return $this->successResponse($order, 'Order updated successfully');
     }
     public function destroy(Order $order)
     {
