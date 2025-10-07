@@ -20,10 +20,10 @@ class UpdateOrderRequest extends FormRequest
                 'exists:users,id_user',
                 'integer'
             ],
-
-            'date' => [
-                $isPatch ? 'sometimes' : 'required',
-                'date'
+            'id_cart' => [
+                $isPatch ? 'sometimes' : 'nullable',
+                'exists:carts,id_cart',
+                'integer'
             ],
             'total' => [
                 $isPatch ? 'sometimes' : 'required',
@@ -46,7 +46,10 @@ class UpdateOrderRequest extends FormRequest
     {
         return [
             'id_cart.exists' => 'The selected cart does not exist.',
-            'date.date' => 'The date is not a valid date.',
+            'id_user.required' => 'The user ID is required.',
+            'id_user.exists' => 'The selected user does not exist.',
+            'id_user.integer' => 'The user ID must be an integer.',
+            'id_cart.integer' => 'The cart ID must be an integer.',
             'total.decimal' => 'The total must be a decimal number with up to 2 decimal places.',
             'total.min' => 'The total must be at least 0.',
             'status.string' => 'The status must be a string.',

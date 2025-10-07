@@ -13,7 +13,7 @@ class OrderDetail extends Model
         'id_order',
         'id_product',
         'quantity',
-        'unit_price',
+        'price',
         'subtotal'
     ];
     public function orders(){

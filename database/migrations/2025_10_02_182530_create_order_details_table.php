@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('order_details', function (Blueprint $table) {
             $table->id('id_order_detail');
-            $table->foreignId('id_order')->constrained('orders','id_order');
+            $table->foreignId('id_order')->constrained('orders','id_order')->onDelete('cascade');
             $table->foreignId('id_product')->constrained('products','id_product');
             $table->integer('quantity');
-            $table->decimal('unit_price', 10, 2);
+            $table->decimal('price', 10, 2);
             $table->decimal('subtotal', 10, 2);
             $table->timestamps();
         });

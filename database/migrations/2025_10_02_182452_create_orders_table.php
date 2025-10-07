@@ -11,9 +11,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id('id_order');
             $table->foreignId('id_user')->constrained('users','id_user');
-            $table->date('date');
-            $table->decimal('total', 10, 2);
-            $table->string('status');
+            $table->foreignId('id_cart')->nullable()->constrained('carts','id_cart')->onDelete('set null');
+            $table->date('date')->useCurrent();
+            $table->decimal('total', 10, 2)->default(0);
+            $table->string('status')->default('pending');
             $table->string('payment_method')->nullable();
             $table->timestamps();
         });

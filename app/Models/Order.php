@@ -11,6 +11,7 @@ class Order extends Model
     protected $primaryKey = 'id_order';
     protected $fillable =[
         'id_user',
+        'id_cart',
         'date',
         'total',
         'status',
@@ -18,6 +19,9 @@ class Order extends Model
     ];
     public function users(){
         return $this->belongsTo(User::class, 'id_user','id_user');
+    }
+    public function carts(){
+        return $this->belongsTo(Cart::class,'id_cart','id_cart');
     }
     public function OrderDetails(){
         return $this->hasMany(OrderDetail::class,'id_order','id_order');
