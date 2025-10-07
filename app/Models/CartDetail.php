@@ -13,6 +13,7 @@ class CartDetail extends Model
         'id_cart',
         'id_product',
         'quantity',
+        'unit_price',
         'subtotal'
     ];
     public function carts(){
