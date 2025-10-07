@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('products', ProductController::class);
         Route::apiResource('users', UserController::class);
         Route::apiResource('carts', CartController::class);
+        Route::delete('carts/clear', [CartController::class, 'clear']);
         Route::apiResource('orders', OrderController::class);
     });
 });

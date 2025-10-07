@@ -8,18 +8,14 @@ class UpdateCartRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $cart = $this->route('cart');
+        return $cart && $this->user()->id_user === $cart->id_user;
     }
     public function rules(): array
     {
         $id_cart = $this->route('cart');
         $isPatch = $this->method() === 'PATCH';
         return [
-            'id_user' => [
-                $isPatch ? 'sometimes' : 'required',
-                'exists:users,id_user',
-                'integer'
-            ],
             'total' => [
                 $isPatch ? 'sometimes' : 'required',
                 'decimal:0,2',

@@ -13,7 +13,6 @@ class StoreCartRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_user' => 'required|exists:users,id_user',
             'total' => 'required|decimal:2|min:0',
             'status' => 'required|string|max:255',
         ];

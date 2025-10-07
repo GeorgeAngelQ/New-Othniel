@@ -37,8 +37,11 @@ class CartController extends Controller
     }
     public function store(StoreCartRequest $request)
     {
-        $cart = Cart::create($request->validated());
-        return $this->successResponse($cart, 'Cart created successfully', 201);
+        $user = $request->user();
+        $data = $request->validated();
+        $data['id_user'] = $user->id_user;
+        $cart = Cart::create($data);
+        return $this->successResponse(new CartResource($cart), 'Cart created successfully', 201);
     }
     public function show(Request $request, Cart $cart)
     {
@@ -62,8 +65,19 @@ class CartController extends Controller
         $cart->update($request->validated());
         return $this->successResponse($cart, 'Cart updated successfully');
     }
-    public function destroy(Cart $cart)
+    public function destroy(Request $request, Cart $cart)
     {
-
+        $user = $request->user();
+        if ($cart->id_user !== $user->id_user) {
+            return $this->errorResponse('You do not have permission to delete this item', 403);
+        }
+        $cart->delete();
+        return $this->successResponse(null, 'Cart item deleted successfully');
+    }
+    public function clear(Request $request)
+    {
+        $user = $request->user();
+        Cart::where('id_user', $user->id_user)->delete();
+        return $this->successResponse(null, 'Cart cleared successfully');
     }
 }
