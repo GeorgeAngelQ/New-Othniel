@@ -10,12 +10,13 @@ class CartSeeder extends Seeder
 {
     public function run(): void
     {
-        $users= User::where('role', 'user')->get();
+        $users = User::all();
 
-        foreach($users as $user) {
-            Cart::factory()->create([
+        foreach ($users as $user) {
+            Cart::factory(fake()->numberBetween(1, 2))->create([
                 'id_user' => $user->id_user,
+                'status' => fake()->randomElement(['active', 'completed']),
             ]);
-        };
+        }
     }
 }

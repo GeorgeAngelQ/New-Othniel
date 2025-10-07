@@ -11,10 +11,12 @@ class PaymentFactory extends Factory
     {
         return [
             'id_order' => Order::factory(),
-            'payment_method' => $this->faker->randomElement(['MercadoPago', 'Paypal', 'Coingate']),
-            'reference_transaction' => $this->faker->uuid(),
-            'amount' => $this->faker->randomFloat(2, 20, 1000),
-            'status' => $this->faker->randomElement(['completed', 'pending', 'failed']),
+            'payment_method' => fake()->randomElement(['credit_card', 'paypal', 'bank_transfer', 'cash']),
+            'reference_transaction' => strtoupper(fake()->bothify('TXN###??')),
+            'amount' => fake()->randomFloat(2, 50, 1000),
+            'status' => fake()->randomElement(['completed', 'pending', 'failed']),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

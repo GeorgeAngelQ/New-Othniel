@@ -10,12 +10,17 @@ class CartDetailFactory extends Factory
 {
     public function definition(): array
     {
+        $product = Product::inRandomOrder()->first() ?? Product::factory()->create();
+        $quantity = fake()->numberBetween(1, 5);
+
         return [
             'id_cart' => Cart::factory(),
-            'id_product' => Product::factory(),
-            'quantity' => $this->faker->numberBetween(1, 10),
-            'unit_price' => $this->faker->randomFloat(2, 1, 100),
-            'subtotal' => $this->faker->randomFloat(2, 1, 500),
+            'id_product' => $product->id_product,
+            'quantity' => $quantity,
+            'unit_price' => $product->price,
+            'subtotal' => $quantity * $product->price,
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

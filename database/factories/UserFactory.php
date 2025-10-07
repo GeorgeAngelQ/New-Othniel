@@ -12,10 +12,12 @@ class UserFactory extends Factory
     {
 
         return [
-            'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'password' => Hash::make('password'),
-            'role' => 'user'
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'password' => Hash::make('password123'), 
+            'role' => fake()->randomElement(['user', 'admin']),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

@@ -10,13 +10,16 @@ class PaymentSeeder extends Seeder
 {
     public function run(): void
     {
-        Order::whereIn('status', ['Pagado', 'Enviado'])->get()->each(function ($order) {
+        $paidOrders = Order::whereIn('status', ['paid', 'shipped', 'delivered'])->get();
+
+        foreach ($paidOrders as $order) {
             Payment::factory()->create([
                 'id_order' => $order->id_order,
                 'payment_method' => $order->payment_method,
                 'amount' => $order->total,
-                'status' => 'completed'
+                'status' => 'completed',
+                'reference_transaction' => strtoupper(fake()->bothify('TXN###??')),
             ]);
-        });
+        }
     }
 }

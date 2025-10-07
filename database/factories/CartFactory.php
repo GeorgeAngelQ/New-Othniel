@@ -10,8 +10,11 @@ class CartFactory extends Factory
     public function definition(): array
     {
         return [
-            'total' => $this->faker->randomFloat(2, 0, 1000),
-            'status' => $this->faker->randomElement(['Activo', 'Cerrado']),
+            'id_user' => User::factory(),
+            'total' => 0,
+            'status' => fake()->randomElement(['active', 'completed', 'abandoned']),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }
