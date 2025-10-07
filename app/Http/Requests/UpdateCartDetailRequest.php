@@ -6,23 +6,40 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCartDetailRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        $isPatch = $this->method() === 'PATCH';
+
         return [
-            //
+            'id_cart' => [
+                $isPatch ? 'sometimes' : 'required',
+                'exists:carts,id_cart',
+                'integer'
+            ],
+            'id_product' => [
+                $isPatch ? 'sometimes' : 'required',
+                'exists:products,id_product',
+                'integer'
+            ],
+            'quantity' => [
+                $isPatch ? 'sometimes' : 'required',
+                'integer',
+                'min:1'
+            ],
+            'unit_price' => [
+                $isPatch ? 'sometimes' : 'required',
+                'decimal:0,2',
+                'min:0'
+            ],
+            'subtotal' => [
+                $isPatch ? 'sometimes' : 'required',
+                'decimal:0,2',
+                'min:0'
+            ],
         ];
     }
 }

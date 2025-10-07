@@ -14,6 +14,7 @@ class CartDetailFactory extends Factory
             'id_cart' => Cart::factory(),
             'id_product' => Product::factory(),
             'quantity' => $this->faker->numberBetween(1, 10),
+            'unit_price' => $this->faker->randomFloat(2, 1, 100),
             'subtotal' => $this->faker->randomFloat(2, 1, 500),
         ];
     }

@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('id_cart')->constrained('carts','id_cart');
             $table->foreignId('id_product')->constrained('products','id_product');
             $table->integer('quantity');
+            $table->decimal('unit_price', 8, 2);
             $table->decimal('subtotal', 8, 2);
             $table->timestamps();
         });

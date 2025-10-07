@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartDetailController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -29,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('users', UserController::class);
         Route::apiResource('carts', CartController::class);
         Route::delete('carts/clear', [CartController::class, 'clear']);
+        Route::apiResource('cart-details', CartDetailController::class)->except(['show', 'edit', 'create']);
         Route::apiResource('orders', OrderController::class);
     });
 });
