@@ -23,9 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
         'role' => RoleMiddleware::class,
         ]);
-        $middleware->api(prepend: [
-            RoleMiddleware::class
-        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (ModelNotFoundException $e, $request) {
