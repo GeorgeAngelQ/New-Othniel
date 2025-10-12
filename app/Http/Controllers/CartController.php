@@ -32,10 +32,26 @@ class CartController extends Controller
             'Carts retrieved successfully'
         );
     }
-    public function create()
+    public function getOrCreateCart(Request $request)
     {
+        $user = $request->user();
 
+        $cart = Cart::where('id_user', $user->id_user)
+            ->where('status', 'pending')
+            ->with('cartDetails.product')
+            ->first();
+
+        if (!$cart) {
+            $cart = Cart::create([
+                'id_user' => $user->id_user,
+                'total' => 0,
+                'status' => 'pending',
+            ]);
+        }
+
+        return $this->successResponse($cart, 'Cart retrieved or created successfully');
     }
+
     public function store(StoreCartRequest $request)
     {
         $cart = $this->cartService->createCart($request->validated());
@@ -55,10 +71,7 @@ class CartController extends Controller
             'Cart retrieved successfully'
         );
     }
-    public function edit(Cart $cart)
-    {
-
-    }
+    public function edit(Cart $cart) {}
     public function update(UpdateCartRequest $request, Cart $cart)
     {
         $updatedCart = $this->cartService->updateCart($cart, $request->validated());

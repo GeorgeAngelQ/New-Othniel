@@ -26,38 +26,42 @@
 </div>
 
 <script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const form = e.target;
-    const data = {
-        email: form.email.value,
-        password: form.password.value
-    };
+        const form = e.target;
+        const data = {
+            email: form.email.value,
+            password: form.password.value
+        };
 
-    try {
-        const res = await fetch('/api/v1/login', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        });
+        try {
+            const res = await fetch('/api/v1/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
 
-        const json = await res.json();
+            const json = await res.json();
 
-        console.log("Respuesta del backend:", json);
+            console.log("Respuesta del backend:", json);
 
-        if (res.ok && json.data && json.data.access_token) {
-            localStorage.setItem("token", json.data.access_token);
-            window.location.href = '/';
-        } else {
-            alert(json.message || 'Credenciales incorrectas');
+            if (res.ok && json.data && json.data.access_token) {
+                localStorage.setItem("token", json.data.access_token);
+                localStorage.setItem("cart_id", json.data.cart_id);
+                window.location.href = '/';
+            } else {
+                alert(json.message || 'Credenciales incorrectas');
+            }
+
+        } catch (error) {
+            console.error("Error al iniciar sesión:", error);
+            alert('Error de conexión con el servidor.');
         }
-
-    } catch (error) {
-        console.error("Error al iniciar sesión:", error);
-        alert('Error de conexión con el servidor.');
-    }
-});
+    });
 </script>
 
 @endsection

@@ -20,7 +20,7 @@ Route::prefix('v1')->group(function () {
             'authenticated' => true,
             'user' => $request->user()
         ]));
-
+        Route::get('/cart/current', [CartController::class, 'getOrCreateCart']);
         Route::middleware('role:admin')->group(function () {
 
             Route::apiResource('users', UserController::class);

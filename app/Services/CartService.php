@@ -5,15 +5,22 @@ namespace App\Services;
 use App\Models\Cart;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class CartService
 {
     public function getAllCarts(array $filters = []): Collection
     {
-        $query = Cart::query();
+         $query = Cart::query();
 
+        // Si no se pasa un filtro, usar el usuario autenticado
         if (isset($filters['id_user'])) {
             $query->where('id_user', $filters['id_user']);
+        } else {
+            $user = Auth::guard('sanctum')->user();
+            if ($user) {
+                $query->where('id_user', $user->id_user);
+            }
         }
 
         if (isset($filters['status'])) {
@@ -29,10 +36,16 @@ class CartService
     public function createCart(array $data): Cart
     {
         return DB::transaction(function () use ($data) {
+            $user = Auth::guard('sanctum')->user();
+
+            if (!$user) {
+                throw new \Exception('Usuario no autenticado');
+            }
+
             return Cart::create([
-                'id_user' => $data['id_user'],
+                'id_user' => $user->id_user,
                 'total' => $data['total'] ?? 0,
-                'status' => $data['status'] ?? 'pending',
+                'status' => $data['status'] ?? 'active',
             ]);
         });
     }

@@ -1,22 +1,49 @@
 document.addEventListener("DOMContentLoaded", async () => {
     let currentPage = 1;
+    const token = localStorage.getItem("token");
+    if (!token) {
+        console.warn("No hay token, redirigiendo a login...");
+        window.location.href = "/login";
+        return;
+    }
 
+    let cartId = null;
+
+    async function getOrCreateCart() {
+        try {
+            const res = await fetch("/api/v1/cart/current", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: "application/json",
+                },
+            });
+            const json = await res.json();
+            if (res.ok && json.data) {
+                cartId = json.data.id_cart;
+                console.log("Carrito activo:", json.data);
+            } else {
+                console.error("No se pudo obtener el carrito:", json);
+            }
+        } catch (err) {
+            console.error("Error al obtener carrito:", err);
+        }
+    }
+
+    await getOrCreateCart();
     async function cargarProductos(page = 1) {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`/api/v1/products?page=${page}`, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: "application/json",
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 },
             });
 
             const result = await response.json();
             const products = result.data.items;
             const meta = result.data.meta;
-            console.log(result);
-            console.log(products);
-            console.log(meta);
             const container = document.getElementById("product-grid");
             container.innerHTML = "";
 
@@ -59,6 +86,39 @@ document.addEventListener("DOMContentLoaded", async () => {
                         </div>
                     `;
                 });
+                document.querySelectorAll(".qty-inc").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        const input =
+                            btn.parentElement.querySelector(".qty-input");
+                        const max = parseInt(input.max);
+                        let value = parseInt(input.value);
+                        if (value < max) input.value = value + 1;
+                    });
+                });
+
+                document.querySelectorAll(".qty-dec").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        const input =
+                            btn.parentElement.querySelector(".qty-input");
+                        let value = parseInt(input.value);
+                        if (value > 1) input.value = value - 1;
+                    });
+                });
+                document.querySelectorAll(".add-cart").forEach((btn) => {
+                    btn.addEventListener("click", async () => {
+                        const productId = btn.dataset.id;
+                        const productElement = btn.closest("div");
+                        const qty = parseInt(
+                            productElement.querySelector(".qty-input").value
+                        );
+                        const price = parseFloat(
+                            productElement
+                                .querySelector(".text-blue-600")
+                                .textContent.replace("$", "")
+                        );
+                        await addToCart(productId, qty, price);
+                    });
+                });
             } else {
                 container.innerHTML =
                     "<p class='col-span-full text-center text-gray-600'>No hay productos disponibles.</p>";
@@ -91,3 +151,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     cargarProductos(currentPage);
 });
+async function addToCart(productId, quantity = 1, unitPrice = 0) {
+    const token = localStorage.getItem("token");
+    const cartId = localStorage.getItem("cartId");
+
+    try {
+        const response = await fetch("/api/v1/cart-details", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json',   
+            },
+            body: JSON.stringify({
+                id_cart: cartId,
+                id_product: productId,
+                quantity: quantity,
+                unit_price: unitPrice,
+                subtotal: unitPrice * quantity,
+            }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            alert("🛒 Producto agregado al carrito");
+            console.log("Detalle del carrito:", data);
+        } else {
+            console.error("Error al agregar:", data);
+            alert(data.message || "No se pudo agregar el producto");
+        }
+    } catch (err) {
+        console.error("Error de red o servidor:", err);
+        alert("asdadasdad en la conexión con el servidor");
+    }
+}

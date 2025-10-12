@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Traits\ApiResponseTrait;
+use App\Models\Cart;
 
 class AuthController extends Controller
 {
@@ -33,26 +34,33 @@ class AuthController extends Controller
     }
     public function login(LoginRequest $request)
     {
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        try {
+            if (!Auth::attempt($request->only('email', 'password'))) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
+            $user = User::where('email', $request->email)->firstOrFail();
+            $token = $user->createToken('auth_token')->plainTextToken;
+            $cart = Cart::firstOrCreate(
+                ['id_user' => $user->id_user, 'status' => 'pending'],
+                ['total' => 0]
+            );
+
+            return $this->successResponse([
+                'user'         => $user,
+                'access_token' => $token,
+                'token_type'   => 'Bearer',
+                'cart_id' => $cart->id_cart
+            ], 'Hi ' . $user->name . ', welcome back');
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'An error occurred during login', 'error' => $th->getMessage()], 500);
         }
-
-        $user = User::where('email', $request->email)->firstOrFail();
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return $this->successResponse([
-            'user'         => $user,
-            'access_token' => $token,
-            'token_type'   => 'Bearer',
-        ], 'Hi ' . $user->name . ', welcome back');
     }
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
         return $this->successResponse(null, 'You have successfully logged out and the token was deleted');
-
     }
     public function logoutAll(Request $request)
     {
