@@ -22,7 +22,7 @@ Route::prefix('v1')->group(function () {
         ]));
 
         Route::middleware('role:admin')->group(function () {
-            Route::apiResource('products', ProductController::class);
+
             Route::apiResource('users', UserController::class);
         });
 
@@ -30,7 +30,8 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('orders', OrderController::class)->only(['index', 'show', 'update']);
         });
 
-        Route::middleware('role:customer')->group(function () {
+        Route::middleware('role:user')->group(function () {
+            Route::apiResource('products', ProductController::class)->only(['index']);
             Route::apiResource('carts', CartController::class);
             Route::delete('carts/clear', [CartController::class, 'clear']);
             Route::apiResource('cart-details', CartDetailController::class)->except(['show', 'edit', 'create']);

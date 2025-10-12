@@ -16,6 +16,12 @@ class Product extends Model
         'stock',
         'image_url'
     ];
+    
+    public function getRouteKeyName()
+    {
+        return 'id_product';
+    }
+
     public function orderDetails(){
         return $this->hasMany(OrderDetail::class,'id_product','id_product');
     }

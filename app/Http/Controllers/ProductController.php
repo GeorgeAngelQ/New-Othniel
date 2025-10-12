@@ -24,7 +24,7 @@ class ProductController extends Controller
         if ($includeOrderDetails) {
             $products = $products->with('orderDetails');
         }
-        $data = new ProductCollection($products->paginate()->appends($request->query()));
+        $data = new ProductCollection($products->paginate(10)->appends($request->query()));
         return $this->successResponse($data, 'Products retrieved successfully');
     }
     public function create()
@@ -38,12 +38,14 @@ class ProductController extends Controller
     }
     public function show(Request $request, Product $product)
     {
-        $includeOrderDetails = $request->query('includeOrderDetails');
-        if ($includeOrderDetails) {
-            $product->load('orderDetails');
-        }
-        $data = new ProductResource($product);
-        return $this->successResponse($data, 'Product retrieved successfully');
+    if ($request->query('includeOrderDetails')) {
+        $product->load('orderDetails');
+    }
+
+    return $this->successResponse(
+        new ProductResource($product),
+        'Product retrieved successfully'
+    );
     }
     public function edit(Product $product)
     {

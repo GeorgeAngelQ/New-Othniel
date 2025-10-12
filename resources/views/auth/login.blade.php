@@ -35,20 +35,29 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         password: form.password.value
     };
 
-    const res = await fetch('/api/v1/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-    });
+    try {
+        const res = await fetch('/api/v1/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
 
-    const json = await res.json();
+        const json = await res.json();
 
-    if (json.success) {
-        alert('Bienvenido, ' + json.user.name);
-        window.location.href = '/dashboard';
-    } else {
-        alert(json.message);
+        console.log("Respuesta del backend:", json);
+
+        if (res.ok && json.data && json.data.access_token) {
+            localStorage.setItem("token", json.data.access_token);
+            window.location.href = '/';
+        } else {
+            alert(json.message || 'Credenciales incorrectas');
+        }
+
+    } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        alert('Error de conexión con el servidor.');
     }
 });
 </script>
+
 @endsection
