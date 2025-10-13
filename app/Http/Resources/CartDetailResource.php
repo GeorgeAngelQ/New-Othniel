@@ -23,6 +23,7 @@ class CartDetailResource extends JsonResource
             'subtotal' => $this->subtotal,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'product' => new ProductResource($this->whenLoaded('product')),
         ];
     }
 }

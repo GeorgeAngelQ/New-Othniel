@@ -16,6 +16,12 @@ class CartDetailService
             $cart = Cart::findOrFail($data['id_cart']);
             $product = Product::findOrFail($data['id_product']);
             $quantity = $data['quantity'];
+            if ($quantity <= 0) {
+                throw new \InvalidArgumentException('La cantidad debe ser mayor que cero.');
+            }
+            if ($quantity > $product->stock) {
+                throw new \InvalidArgumentException('No hay suficiente stock para el producto solicitado.');
+            }
             $unitPrice = $product->price;
             $subtotal = $unitPrice * $quantity;
             $cartDetail = CartDetail::where('id_cart', $cart->id_cart)
@@ -46,17 +52,22 @@ class CartDetailService
                 $cartDetail->subtotal = $cartDetail->quantity * $cartDetail->unit_price;
             }
             $cartDetail->save();
-
-            $this->updateCartTotal($cartDetail->cart);
-            return $cartDetail;
+            $cart = $cartDetail->cart ?? Cart::find($cartDetail->id_cart);
+            if ($cart) {
+                $this->updateCartTotal($cart);
+            }
+            return $cartDetail->refresh();
         });
     }
+
     public function removeCartDetail(CartDetail $cartDetail): void
     {
         DB::transaction(function () use ($cartDetail) {
             $cart = $cartDetail->cart;
             $cartDetail->delete();
-            $this->updateCartTotal($cart);
+            if ($cart) {
+                $this->updateCartTotal($cart);
+            }
         });
     }
     public function getCartDetails(int $id_cart): Collection

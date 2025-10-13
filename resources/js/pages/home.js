@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const json = await res.json();
             if (res.ok && json.data) {
                 cartId = json.data.id_cart;
+                localStorage.setItem("cartId", cartId);
                 console.log("Carrito activo:", json.data);
             } else {
                 console.error("No se pudo obtener el carrito:", json);
@@ -79,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 </div>
 
                                 <button class="add-cart w-full bg-[#a67c52] text-white py-1.5 rounded-lg text-sm hover:bg-[#8c6644] transition"
-                                    data-id="${product.id}">
+                                    data-id="${product.id_product}">
                                     Agregar
                                 </button>
                             </div>
@@ -161,7 +162,7 @@ async function addToCart(productId, quantity = 1, unitPrice = 0) {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
-                'Accept': 'application/json',   
+                'Accept': 'application/json',
             },
             body: JSON.stringify({
                 id_cart: cartId,
@@ -177,6 +178,8 @@ async function addToCart(productId, quantity = 1, unitPrice = 0) {
             alert("🛒 Producto agregado al carrito");
             console.log("Detalle del carrito:", data);
         } else {
+            console.log(productId);
+            console.log(cartId);
             console.error("Error al agregar:", data);
             alert(data.message || "No se pudo agregar el producto");
         }

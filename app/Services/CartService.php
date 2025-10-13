@@ -27,11 +27,11 @@ class CartService
             $query->where('status', $filters['status']);
         }
 
-        return $query->with(['user', 'cartDetails'])->get();
+        return $query->with(['users', 'cartDetails'])->get();
     }
     public function getCartById(int $id_cart): ?Cart
     {
-        return Cart::with(['user', 'cartDetails.product'])->findOrFail($id_cart);
+        return Cart::with(['users', 'cartDetails.product'])->findOrFail($id_cart);
     }
     public function createCart(array $data): Cart
     {

@@ -1,3 +1,167 @@
-<div>
-    <!-- It is not the man who has too little, but the man who craves more, that is poor. - Seneca -->
+@extends('layouts.app')
+
+@section('content')
+<div class="max-w-5xl mx-auto bg-white rounded-xl shadow-md p-6 mt-6">
+    <h1 class="text-2xl font-bold mb-6 text-center text-[#4a3b2f]">🛒 Mi Carrito</h1>
+
+    <!-- Contenedor de productos -->
+    <div id="cart-items" class="divide-y divide-[#d9c8b6] mb-6">
+        <p class="text-center text-[#6b5846]">Cargando carrito...</p>
+    </div>
+
+    <!-- Total -->
+    <div class="flex justify-between items-center p-4 border-t border-[#d9c8b6] bg-[#f9f5f2] rounded-lg">
+        <span class="font-semibold text-lg text-[#4a3b2f]">Total:</span>
+        <span id="cart-total" class="text-xl font-bold text-[#a67c52]">$0.00</span>
+    </div>
+
+    <!-- Botón de checkout -->
+    <div class="text-center mt-6">
+        <button id="checkout-btn"
+            class="bg-[#a67c52] hover:bg-[#8c6644] text-white font-semibold px-6 py-2 rounded-lg transition">
+            Proceder al pago
+        </button>
+    </div>
 </div>
+@endsection
+
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("token");
+        const cartId = localStorage.getItem("cartId");
+
+        if (!token || !cartId) {
+            window.location.href = "/home";
+            return;
+        }
+
+        const cartContainer = document.getElementById("cart-items");
+        const totalElement = document.getElementById("cart-total");
+
+        async function loadCart() {
+            try {
+                const res = await fetch(`/api/v1/carts/${cartId}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json"
+                    },
+                });
+
+                const json = await res.json();
+                const cartDetails = json.data?.cartDetails ?? [];
+
+                if (!res.ok || cartDetails.length === 0) {
+                    cartContainer.innerHTML = `<p class="text-center text-[#6b5846] py-4">Tu carrito está vacío.</p>`;
+                    totalElement.textContent = "$0.00";
+                    return;
+                }
+
+                cartContainer.innerHTML = "";
+                let total = 0;
+
+                cartDetails.forEach(item => {
+                    const subtotal = parseFloat(item.unit_price) * item.quantity;
+                    total += subtotal;
+
+                    cartContainer.innerHTML += `
+                    <div class="flex items-center justify-between py-4 border-b border-[#d9c8b6] gap-4">
+                        <div class="flex items-center gap-4 flex-1">
+                            <img
+                            src="${item.product?.image_url}"
+                            alt="${item.product?.name}"
+                            class="w-20 h-20 object-cover rounded-xl border border-[#d9c8b6] shadow-sm"
+                            >
+                            <div>
+                            <h3 class="font-semibold text-lg text-[#4a3b2f]">
+                                ${item.product?.name ?? 'Producto sin nombre'}
+                            </h3>
+                            <p class="text-sm text-[#6b5846] mt-1">
+                                $${parseFloat(item.unit_price).toFixed(2)} <span class="text-xs text-[#8b7764]">c/u</span>
+                            </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <input
+                            type="number"
+                            min="1"
+                            value="${item.quantity}"
+                            data-id="${item.id_cart_detail}"
+                            class="cart-qty w-16 text-center border border-[#d9c8b6] rounded-lg text-[#4a3b2f] focus:outline-none focus:ring focus:ring-[#d9c8b6]"
+                            >
+                            <p class="font-semibold text-[#a67c52] text-lg min-w-[80px] text-right">
+                            $${subtotal.toFixed(2)}
+                            </p>
+                            <button
+                            class="delete-item bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition"
+                            data-id="${item.id_cart_detail}"
+                            title="Eliminar producto"
+                            >
+                            🗑️
+                            </button>
+                        </div>
+                    </div>
+      `;
+                });
+
+                totalElement.textContent = `$${total.toFixed(2)}`;
+
+                document.querySelectorAll(".cart-qty").forEach(input => {
+                    input.addEventListener("change", async () => {
+                        const idDetail = input.dataset.id;
+                        const newQty = parseInt(input.value);
+                        if (newQty > 0) {
+                            await updateQuantity(idDetail, newQty);
+                            await loadCart();
+                        }
+                    });
+                });
+
+                document.querySelectorAll(".delete-item").forEach(btn => {
+                    btn.addEventListener("click", async () => {
+                        const idDetail = btn.dataset.id;
+                        await deleteCartItem(idDetail);
+                        await loadCart();
+                    });
+                });
+
+            } catch (err) {
+                console.error("Error al cargar carrito:", err);
+                cartContainer.innerHTML = `<p class="text-center text-red-600">Error al cargar el carrito.</p>`;
+            }
+        }
+
+        async function updateQuantity(idDetail, quantity) {
+            try {
+                await fetch(`/api/v1/cart-details/${idDetail}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        quantity
+                    })
+                });
+            } catch (err) {
+                console.error("Error al actualizar cantidad:", err);
+            }
+        }
+
+        async function deleteCartItem(idDetail) {
+            try {
+                await fetch(`/api/v1/cart-details/${idDetail}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json"
+                    }
+                });
+            } catch (err) {
+                console.error("Error al eliminar producto:", err);
+            }
+        }
+
+        loadCart();
+    });
+</script>

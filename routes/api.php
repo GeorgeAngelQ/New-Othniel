@@ -31,7 +31,7 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::middleware('role:user')->group(function () {
-            Route::apiResource('products', ProductController::class)->only(['index']);
+            Route::apiResource('products', ProductController::class)->except(['store','update','destroy']);
             Route::apiResource('carts', CartController::class);
             Route::delete('carts/clear', [CartController::class, 'clear']);
             Route::apiResource('cart-details', CartDetailController::class)->except(['show', 'edit', 'create']);

@@ -15,10 +15,7 @@ class StoreCartDetailRequest extends FormRequest
         return [
             'id_cart' => 'required|integer|exists:carts,id_cart',
             'id_product' => 'required|integer|exists:products,id_product',
-            'quantity' => 'required|integer|min:1',
-            'unit_price' => 'required|decimal:0,2|min:0',
-            'subtotal' => 'required|decimal:0,2|min:0'
-
+            'quantity' => 'required|integer|min:1'
         ];
     }
     public function messages(): array
@@ -33,12 +30,6 @@ class StoreCartDetailRequest extends FormRequest
             'quantity.required' => 'Quantity is required.',
             'quantity.integer' => 'Quantity must be an integer.',
             'quantity.min' => 'Quantity must be at least 1.',
-            'unit_price.required' => 'Unit price is required.',
-            'unit_price.decimal' => 'Unit price must be a decimal number with up to 2 decimal places.',
-            'unit_price.min' => 'Unit price must be at least 0.',
-            'subtotal.required' => 'Subtotal is required.',
-            'subtotal.decimal' => 'Subtotal must be a decimal number with up to 2 decimal places.',
-            'subtotal.min' => 'Subtotal must be at least 0.'
         ];
     }
 }
