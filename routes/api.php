@@ -8,6 +8,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartDetailController;
+use App\Http\Controllers\PaymentController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -36,6 +37,7 @@ Route::prefix('v1')->group(function () {
             Route::delete('carts/clear', [CartController::class, 'clear']);
             Route::apiResource('cart-details', CartDetailController::class)->except(['show', 'edit', 'create']);
             Route::apiResource('orders', OrderController::class);
+            Route::get('/payments/mercadopago/{id_cart}', [PaymentController::class, 'createPreferenceMercadoPago']);
         });
     });
 });

@@ -15,17 +15,48 @@
         <span id="cart-total" class="text-xl font-bold text-[#a67c52]">$0.00</span>
     </div>
 
-    <!-- Botón de checkout -->
-    <div class="text-center mt-6">
-        <button id="checkout-btn"
-            class="bg-[#a67c52] hover:bg-[#8c6644] text-white font-semibold px-6 py-2 rounded-lg transition">
-            Proceder al pago
-        </button>
+    <div class="flex flex-col items-center justify-center mt-8">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Escoge tu método de pago</h2>
+
+        <div class="flex flex-wrap justify-center gap-6">
+            <button
+                onclick="redirectToMercadoPago()"
+                class="w-70 h-36 bg-white rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center transition duration-200">
+                <img src="/storage/assets/MercadoPago.png" alt="MercadoPago" class="w-48 h-auto">
+            </button>
+            <button
+                onclick="redirectToPayPal()"
+                class="w-70 h-36 bg-white rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center transition duration-200">
+                <img src="/storage/assets/PayPal.png" alt="PayPal" class="w-48 h-auto">
+            </button>
+            <button
+                onclick="redirectToCoinGate()"
+                class="w-70 h-36 bg-white rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center transition duration-200">
+                <img src="/storage/assets/Coingate.png" alt="CoinGate" class="w-48 h-auto">
+            </button>
+        </div>
     </div>
 </div>
 @endsection
 
 <script>
+    function redirectToMercadoPago() {
+        fetch(`/api/v1/payments/mercadopago/${localStorage.getItem('cartId')}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.sandbox_init_point) {
+                    window.location.href = data.sandbox_init_point;
+                } else {
+                    alert("Error al redirigir a MercadoPago");
+                }
+            });
+    }
     document.addEventListener("DOMContentLoaded", async () => {
         const token = localStorage.getItem("token");
         const cartId = localStorage.getItem("cartId");
@@ -163,5 +194,7 @@
         }
 
         loadCart();
+
+
     });
 </script>

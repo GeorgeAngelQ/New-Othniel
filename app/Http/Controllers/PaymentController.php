@@ -2,65 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePaymentRequest;
-use App\Http\Requests\UpdatePaymentRequest;
-use App\Models\Payment;
+use App\Models\Cart;
+use App\Services\MercadoPagoService;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected $mercadoPagoService;
+
+    public function __construct(MercadoPagoService $mercadoPagoService)
     {
-        //
+        $this->mercadoPagoService = $mercadoPagoService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function createPreferenceMercadoPago($id_cart)
     {
-        //
-    }
+        $cart = Cart::with(['CartDetails.product', 'users'])->findOrFail($id_cart);
+        $preference = $this->mercadoPagoService->crearOrden($cart);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePaymentRequest $request)
-    {
-        //
-    }
+        if (isset($preference->id) && isset($preference->init_point)) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Preferencia creada correctamente',
+                'init_point' => $preference->init_point,
+                'sandbox_init_point' => $preference->sandbox_init_point,
+                'id_preference' => $preference->id
+            ]);
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePaymentRequest $request, Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Payment $payment)
-    {
-        //
+        return response()->json([
+            'status' => 'error',
+            'message' => 'No se pudo crear la preferencia',
+            'details' => $preference
+        ], 500);
     }
 }
