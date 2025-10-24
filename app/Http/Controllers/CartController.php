@@ -37,7 +37,7 @@ class CartController extends Controller
         $user = $request->user();
 
         $cart = Cart::where('id_user', $user->id_user)
-            ->where('status', 'pending')
+            ->where('status', 'active')
             ->with('cartDetails.product')
             ->first();
 
@@ -45,7 +45,7 @@ class CartController extends Controller
             $cart = Cart::create([
                 'id_user' => $user->id_user,
                 'total' => 0,
-                'status' => 'pending',
+                'status' => 'active',
             ]);
         }
 

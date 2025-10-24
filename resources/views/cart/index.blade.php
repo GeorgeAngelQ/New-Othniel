@@ -40,38 +40,69 @@
 @endsection
 
 <script>
-    function redirectToMercadoPago() {
-        fetch(`/api/v1/payments/mercadopago/${localStorage.getItem('cartId')}`, {
-                method: 'GET',
+    async function createOrder(id_cart) {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`/api/v1/orders/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+                "Accept": "application/json "
+            },
+            body: JSON.stringify({ id_cart: id_cart })
+        });
+
+        const data = await res.json();
+
+        if (data.status === "success" && data.order) {
+            console.log("Orden creada:", data.order);
+            return data.order;
+        } else {
+            alert("Error al crear la orden: " + data.message +" Data cart:"+ data.cart);
+            throw new Error(data.message + data.cart);
+        }
+    }
+
+    async function redirectToMercadoPago() {
+        try {
+            const order = await createOrder();
+
+            const res = await fetch(`/api/v1/payments/mercadopago/${order.id_order}`, {
+                method: "GET",
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.sandbox_init_point) {
-                    window.location.href = data.sandbox_init_point;
-                } else {
-                    alert("Error al redirigir a MercadoPago");
+                    "Authorization": `Bearer ${localStorage.getItem('token')}`,
+                    "Accept": "application/json"
                 }
             });
+
+            const data = await res.json();
+
+            if (data.status === "success" && (data.sandbox_init_point || data.init_point)) {
+                const url = data.sandbox_init_point || data.init_point;
+                window.location.href = url;
+            } else {
+                alert("Error al redirigir a MercadoPago: " + data.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error en el flujo de pago.");
+        }
     }
     document.addEventListener("DOMContentLoaded", async () => {
         const token = localStorage.getItem("token");
-        const cartId = localStorage.getItem("cartId");
+        const id_cart = localStorage.getItem("id_cart");
 
-        if (!token || !cartId) {
-            window.location.href = "/home";
+        if (!token || !id_cart) {
+            window.location.href = "/";
             return;
         }
 
         const cartContainer = document.getElementById("cart-items");
         const totalElement = document.getElementById("cart-total");
-
         async function loadCart() {
             try {
-                const res = await fetch(`/api/v1/carts/${cartId}`, {
+                const res = await fetch(`/api/v1/carts/${id_cart}`, {
                     headers: {
                         "Authorization": `Bearer ${token}`,
                         "Accept": "application/json"

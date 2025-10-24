@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
+use App\Models\Order;
 use App\Services\MercadoPagoService;
 
 class PaymentController extends Controller
@@ -14,25 +14,14 @@ class PaymentController extends Controller
         $this->mercadoPagoService = $mercadoPagoService;
     }
 
-    public function createPreferenceMercadoPago($id_cart)
+    public function createPreferenceMercadoPago($id_order)
     {
-        $cart = Cart::with(['CartDetails.product', 'users'])->findOrFail($id_cart);
-        $preference = $this->mercadoPagoService->crearOrden($cart);
+        $order = Order::with('orderDetails.products', 'users')->findOrFail($id_order);
 
-        if (isset($preference->id) && isset($preference->init_point)) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Preferencia creada correctamente',
-                'init_point' => $preference->init_point,
-                'sandbox_init_point' => $preference->sandbox_init_point,
-                'id_preference' => $preference->id
-            ]);
-        }
+        $service = new MercadoPagoService();
+        $response = $service->crearOrden($order);
 
-        return response()->json([
-            'status' => 'error',
-            'message' => 'No se pudo crear la preferencia',
-            'details' => $preference
-        ], 500);
+        return response()->json($response);
     }
+
 }

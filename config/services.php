@@ -37,5 +37,10 @@ return [
     'mercadopago' => [
         'access_token' => env('MERCADOPAGO_ACCESS_TOKEN'),
     ],
-
+    'coingate' => [
+        'api_token' => env('COINGATE_API_TOKEN'),
+        'environment' => env('COINGATE_ENVIRONMENT', 'sandbox'),
+            'api_url' => env('COINGATE_API_URL', 'https://api-sandbox.coingate.com/v2'),
+        'auth_token' => env('COINGATE_AUTH_TOKEN'),
+    ],
 ];
