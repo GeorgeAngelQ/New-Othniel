@@ -39,6 +39,7 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('orders', OrderController::class);
             Route::post('/orders/create', [OrderController::class, 'createFromCart']);
             Route::get('/payments/mercadopago/{id_order}', [PaymentController::class, 'createPreferenceMercadoPago']);
+            Route::get('/payments/coingate/{id_order}', [PaymentController::class, 'createOrderCrypto']);
         });
     });
 });

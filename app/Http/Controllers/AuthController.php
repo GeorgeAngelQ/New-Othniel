@@ -41,16 +41,12 @@ class AuthController extends Controller
 
             $user = User::where('email', $request->email)->firstOrFail();
             $token = $user->createToken('auth_token')->plainTextToken;
-            $cart = Cart::firstOrCreate(
-                ['id_user' => $user->id_user, 'status' => 'pending'],
-                ['total' => 0]
-            );
+
 
             return $this->successResponse([
                 'user'         => $user,
                 'access_token' => $token,
                 'token_type'   => 'Bearer',
-                'cart_id' => $cart->id_cart
             ], 'Hi ' . $user->name . ', welcome back');
         } catch (\Throwable $th) {
             return response()->json(['message' => 'An error occurred during login', 'error' => $th->getMessage()], 500);

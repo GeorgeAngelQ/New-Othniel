@@ -51,7 +51,7 @@
 
             if (res.ok && json.data && json.data.access_token) {
                 localStorage.setItem("token", json.data.access_token);
-                localStorage.setItem("cart_id", json.data.cart_id);
+                localStorage.setItem("id_cart", json.data.id_cart);
                 window.location.href = '/';
             } else {
                 alert(json.message || 'Credenciales incorrectas');

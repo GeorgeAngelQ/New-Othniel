@@ -1,7 +1,7 @@
 <nav class="bg-[#f0e8e0] border-b border-[#d9c8b6]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
-            <img src="/storage/assets/OthinelLogo3.png" class ="h-35 w-25 full object-cover" alt="Logo">
+            <img src="/storage/assets/OthinelLogo3.png" class="h-35 w-25 full object-cover" alt="Logo">
             <!-- Nombre de la tienda -->
             <a href="{{ url('/') }}" class="text-2xl font-semibold text-[#5c4033] hover:text-[#3e2a20] transition">
                 Othniel Store
@@ -9,24 +9,37 @@
 
             <!-- Menú derecho -->
             <div class="flex items-center space-x-6">
-                <nav class="bg-[#f0e8e0] border-b border-[#d9c8b6] shadow-sm">
+                <nav class="bg-[#f0e8e0] w-full">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div class="flex justify-between h-16 items-center" >
-                            <div id="navbar-user" class="flex items-center space-x-6"></div>
+                        <div class="flex justify-between h-16 items-center">
+
+                            <!-- Botón de Carrito (izquierda) -->
+                            <div class="flex items-center">
+                                <a
+                                    href="{{ url('/cart') }}"
+                                    class="flex items-center space-x-2 text-black px-10 py-2 rounded-xl hover:bg-[#b5835a] transition duration-300">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </a>
+                            </div>
+
+                            <!-- Sección de usuario (derecha) -->
+                            <div id="navbar-user" class="flex items-center space-x-6 px-10"></div>
+
                         </div>
                     </div>
                 </nav>
             </div>
+
         </div>
     </div>
 </nav>
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
-  const navbarUser = document.getElementById("navbar-user");
-  const token = localStorage.getItem("token");
+    document.addEventListener("DOMContentLoaded", async () => {
+        const navbarUser = document.getElementById("navbar-user");
+        const token = localStorage.getItem("token");
 
-  if (!token) {
-    navbarUser.innerHTML = `
+        if (!token) {
+            navbarUser.innerHTML = `
       <a href="/login" class="text-[#5c4033] font-semibold hover:text-[#3e2a20] transition">
         Iniciar sesión
       </a>
@@ -34,21 +47,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         Registrarse
       </a>
     `;
-    return;
-  }
+            return;
+        }
 
-  try {
-    const res = await fetch("/api/v1/check-token", {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Accept": "application/json"
-      }
-    });
+        try {
+            const res = await fetch("/api/v1/check-token", {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Accept": "application/json"
+                }
+            });
 
-    const data = await res.json();
+            const data = await res.json();
 
-    if (res.ok && data.authenticated) {
-      navbarUser.innerHTML = `
+            if (res.ok && data.authenticated) {
+                navbarUser.innerHTML = `
         <span class="text-[#5c4033] font-medium">
           ${data.user.name}
         </span>
@@ -58,20 +71,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         </button>
       `;
 
-      document.getElementById("logoutBtn").addEventListener("click", async () => {
-        await fetch("/api/v1/logout", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Accept": "application/json"
-          }
-        });
-        localStorage.removeItem("token");
-        window.location.href = "/login";
-      });
-    } else {
-      localStorage.removeItem("token");
-      navbarUser.innerHTML = `
+                document.getElementById("logoutBtn").addEventListener("click", async () => {
+                    await fetch("/api/v1/logout", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Accept": "application/json"
+                        }
+                    });
+                    localStorage.removeItem("token");
+                    window.location.href = "/login";
+                });
+            } else {
+                localStorage.removeItem("token");
+                navbarUser.innerHTML = `
         <a href="/login" class="text-[#5c4033] font-semibold hover:text-[#3e2a20] transition">
           Iniciar sesión
         </a>
@@ -79,10 +92,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           Registrarse
         </a>
       `;
-    }
-  } catch (error) {
-    console.error("Error verificando token:", error);
-    navbarUser.innerHTML = `
+            }
+        } catch (error) {
+            console.error("Error verificando token:", error);
+            navbarUser.innerHTML = `
       <a href="/login" class="text-[#5c4033] font-semibold hover:text-[#3e2a20] transition">
         Iniciar sesión
       </a>
@@ -90,7 +103,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         Registrarse
       </a>
     `;
-  }
-});
+        }
+    });
 </script>
-

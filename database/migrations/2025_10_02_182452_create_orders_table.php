@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('id_cart')->nullable()->constrained('carts','id_cart')->onDelete('set null');
             $table->date('date')->useCurrent();
             $table->decimal('total', 10, 2)->default(0);
-            $table->string('status')->default('pending');
+            $table->string('status')->default('active');
             $table->string('payment_method')->nullable();
             $table->timestamps();
         });

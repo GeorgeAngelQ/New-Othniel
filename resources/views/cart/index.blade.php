@@ -89,6 +89,32 @@
             alert("Error en el flujo de pago.");
         }
     }
+        async function redirectToCoinGate() {
+        try {
+            const order = await createOrder();
+
+            const res = await fetch(`/api/v1/payments/coingate/${order.id_order}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('token')}`,
+                    "Accept": "application/json"
+                }
+            });
+
+            const data = await res.json();
+
+            if (data.payment_url) {
+                console.log("Redirigiendo a CoinGate:", data.payment_url);
+                window.location.href = data.payment_url;
+            } else {
+                alert("Error al redirigir a CoinGate: " + (data.error || "sin detalles"));
+                console.error("Detalles CoinGate:", data);
+            }
+        } catch (err) {
+            console.error("Error en flujo CoinGate:", err);
+            alert("Error en el flujo de pago con CoinGate.");
+        }
+    }
     document.addEventListener("DOMContentLoaded", async () => {
         const token = localStorage.getItem("token");
         const id_cart = localStorage.getItem("id_cart");
