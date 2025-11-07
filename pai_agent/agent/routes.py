@@ -73,155 +73,97 @@ def by_categoria(p, cat):
     return cat in name
 
 # ---------- Ruta principal ----------
+def by_categoria(p, cat):
+    if not cat:
+        return True
+    return cat in normalize(p.get('name', ''))
+
+
+# =====================================================
+#           RUTA PRINCIPAL DEL AGENTE /chat
+# =====================================================
 @agent_bp.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json(silent=True) or {}
-
     raw = data.get("message", "")
-
-    # Si el frontend envía un objeto en vez de texto -> conviértelo en string
-    if isinstance(raw, dict):
-        msg = json.dumps(raw)
-    else:
-        msg = str(raw).strip()
-
+    msg = json.dumps(raw) if isinstance(raw, dict) else str(raw).strip()
     low = msg.lower()
 
     # Saludos
-    if re.search(r'\b(hola|buenas|buenos dias|buenas tardes|buenas noches|hey|que tal|qué tal|holi|alo|saludos)\b', low):
-        return jsonify({"type":"chat","data":"¡Hola! 👋 Soy el asistente de Othniel. Puedo ayudarte a buscar prendas, filtrar por talla/color/precio y añadir al carrito. Ejemplos: ‘polo menos de 60’, ‘jogger color azul’."})
+    if re.search(r'\b(hola|buenas|hey|que tal|qué tal|holi|alo|saludos)\b', low):
+        return jsonify({"type":"chat","data":"¡Hola! 👋 Puedo ayudarte a buscar prendas y añadir al carrito."})
 
-    # Ayuda
-    if re.search(r'\b(ayuda|help|\?)\b', low):
-        return jsonify({"type":"chat","data":"Prueba: ‘polo talla M hasta 60’, ‘casaca color negro’, ‘jogger menos de 60’."})
-
-    products = load_products()
-
-
-
-    # --- Opciones del menú rápido ---
-    # Llega desde el frontend como: opcion:compra / opcion:estado / opcion:cambios / opcion:envios / opcion:horarios
+    # Botones del menú (FAQ)
     m_opt = re.search(r'\bopcion:(compra|estado|cambios|envios|horarios)\b', low)
     if m_opt:
         opt = m_opt.group(1)
         if opt == "estado":
-            # Si no envían número, pedimos uno
-            return jsonify({"type":"chat","data":"Para consultar el estado, envíame tu número de orden. Ej: 'estado 12345'."})
-        # Resto son FAQs
+            return jsonify({"type":"chat","data":"Envíame tu número de orden. Ej: 'estado 12345'."})
         return jsonify({"type":"chat","data": FAQ.get(opt, "¿En qué puedo ayudarte?")})
 
-    # --- Estado de pago por número de orden (entrada libre) ---
-    # Reconoce: "estado 12345", "orden 12345", "pago 12345"
+
+    # Consultar estado del pago
     m_estado = re.search(r'\b(estado|orden|pago)\s*(\d{3,})\b', low)
     if m_estado:
         order_id = m_estado.group(2)
-        # Placeholder: aquí podrías consultar CoinGate con su API y devolver el estado real
-        return jsonify({"type":"status","data":{"status":"PENDING","method":"Coingate","order_id":order_id}})
+
+        # ⚠️ Aquí solo devolvemos placeholder
+        return jsonify({"type":"status","data":{
+            "status":"PENDING",
+            "method":"Coingate",
+            "order_id": order_id
+        }})
 
 
-
-
-    # --------- Búsqueda de catálogo ----------
-
-    if any(w in low for w in ['buscar','muestrame','muestráme','polo','polos','polera','poleras','camisa','casaca','pantal','pantalon','pantalón','chompa','jogger','chaqueta']):
+    # =======================
+    # BUSQUEDA DE PRODUCTOS
+    # =======================
+    if any(w in low for w in ['buscar','muestrame','polo','polera','camisa','casaca','pantal','jogger','chompa','joggers','short','sudadera','bermuda','cargo','chaleco','entrenamiento','jean']):
+        products = load_products()
         q_terms = terms_from_query(msg)
         f = parse_filters(msg)
 
         def apply_filters(items, fobj):
             res = [p for p in items if by_categoria(p, fobj['categoria'])]
             if fobj['talla']:
-                res = [p for p in res if fobj['talla'] in p.get('talla',[])]
+                res = [p for p in res if fobj['talla'] in (p.get('talla') or [])]
             if fobj['color']:
                 color_q = singular(fobj['color'])
                 res = [p for p in res if singular(normalize(p.get('color',''))) == color_q]
             if fobj['precioMax'] is not None:
-                res = [p for p in res if (p.get('price') or 0) <= fobj['precioMax']]
+                def safe_price(p):
+                    try:
+                        return float(p.get('price', 0))
+                    except:
+                        return 0
+
+                res = [p for p in res if safe_price(p) <= fobj['precioMax']]
+
             return res
 
-        # 1) Texto “suave”
-        base = []
-        for p in products:
-            prod_txt = normalize(f"{p.get('id_product','')} {p.get('name','')} {p.get('color','')}")
-            if match_loose(prod_txt, q_terms):
-                base.append(p)
-
-        # 2) Aplicar filtros tal cual
+        base = [p for p in products if match_loose(normalize(p.get("name","")), q_terms)]
         results = apply_filters(base, f)
-        relaxed = False
-        note = None
-
-        # 3) Relajaciones controladas (SOLO si NO fueron explícitas)
-        if not results and f.get('color') and not f.get('_color_exp'):
-            f = dict(f); f['color'] = None
-            results = apply_filters(base, f); relaxed = True
-
-        if not results and f.get('precioMax') is not None and not f.get('_precio_exp'):
-            f = dict(f); f['precioMax'] = f['precioMax'] * 1.10
-            results = apply_filters(base, f); relaxed = True
-
-        if not results and f.get('categoria') and not f.get('_cat_exp'):
-            f = dict(f); f['categoria'] = None
-            results = apply_filters(base, f); relaxed = True
-
-        # 4) Si hubo filtros explícitos y sigue vacío -> mensaje claro
-        if not results and (f.get('_color_exp') or f.get('_precio_exp') or f.get('_talla_exp') or f.get('_cat_exp')):
-            motivos = []
-            pf = parse_filters(msg)  # volver a leer valores originales para el mensaje
-            if pf.get('_color_exp'):  motivos.append(f"color '{pf.get('color') or ''}'")
-            if pf.get('_talla_exp'):  motivos.append(f"talla '{pf.get('talla') or ''}'")
-            if pf.get('_precio_exp'): motivos.append(f"precio ≤ {pf.get('precioMax') or ''}")
-            if pf.get('_cat_exp'):    motivos.append(f"categoría '{pf.get('categoria') or ''}'")
-            detalle = ", ".join(motivos)
-            return jsonify({"type":"chat","data":f"No encontré coincidencias exactas para {detalle}. Prueba con otro color/talla o ajusta el precio."})
-
-        # 5) Último recurso: mejores matches (solo si no había filtros explícitos)
-        if not results:
-            def score(p):
-                prod_txt = normalize(f"{p.get('id','')} {p.get('name','')} {p.get('color','')}")
-                hits = sum(1 for t in q_terms if t in prod_txt)
-                bonus = 0
-                if f.get('talla') and f['talla'] in p.get('talla',[]): bonus += 1
-                if f.get('color') and singular(normalize(p.get('color',''))) == singular(f['color']): bonus += 1
-                if f.get('precioMax') is not None and (p.get('price') or 0) <= f['precioMax']: bonus += 1
-                return hits*2 + bonus
-            ranked = sorted(products, key=score, reverse=True)
-            results = ranked[:3] if ranked else []
-            if results:
-                relaxed = True
-                note = "Lo más cercano a tu búsqueda."
 
         if not results:
-            return jsonify({"type":"chat","data":"No encontré coincidencias. Ej.: ‘polo talla M hasta 60’ o ‘polera negra’."})
+            return jsonify({"type":"chat","data":"No encontré coincidencias. Intenta: ‘polo M hasta 60’ o ‘casaca negra’."})
 
         payload = [{
-            "id":p.get("id_product"), "nombre":p.get("name"), "precio":p.get("price"), "moneda":"PEN",
-            "tallas":p.get("talla",[]), "colores":[p.get("color","")], "img":p.get("image_url","")
+            "id":p.get("id_product"),
+            "nombre":p.get("name"),
+            "precio":p.get("price"),
+            "moneda":"PEN",
+            "tallas":p.get("talla",[]),
+            "colores":[p.get("color","")],
+            "img":p.get("image_url","")
         } for p in results[:12]]
 
-        resp = {"type":"products","data":payload}
-        if relaxed and note:
-            resp["note"] = note
-        return jsonify(resp)
+        return jsonify({"type":"products","data":payload})
 
-    # --------- Detalle por ID ----------
-    m_id = re.search(r'\b([A-Z]{3}-\d{2})\b', low.upper())
-    if m_id:
-        pid = m_id.group(1)
-        p = next((x for x in products if (x.get("id_product") or "").upper() == pid), None)
-        if not p:
-            return jsonify({"type":"product","data":None})
-        return jsonify({"type":"product","data":{
-            "id":p.get("id_product"), "nombre":p.get("name"), "precio":p.get("price"), "moneda":"PEN",
-            "tallas":p.get("talla",[]), "colores":[p.get("color","")], "img":p.get("image_url","")
-        }})
 
-    # --------- Añadir al carrito (lo hace el front con addToCart) ----------
-    if any(w in low for w in ['añade','agrega','carrito']):
-        return jsonify({"type":"cart","data":{"ok":True,"note":"añadido desde UI del cliente"}})
+    # ===================
+    # AÑADIR AL CARRITO
+    # ===================
+    if "carrito" in low or "agrega" in low or "añade" in low:
+        return jsonify({"type":"cart","data":{"ok":True}})
 
-    # --------- Estado de pago (placeholder) ----------
-    if any(w in low for w in ['estado','orden','pago']):
-        return jsonify({"type":"status","data":{"status":"PENDING","method":"Coingate"}})
-
-    # Fallback
-    return jsonify({"type":"chat","data":"Puedo ayudarte a buscar prendas por talla, color y precio. Ej.: ‘polo M hasta 60’, ‘casaca negra L’, ‘CAM-01’."})
+    return jsonify({"type":"chat","data":"Puedo ayudarte a buscar prendas por talla/color/precio.\nEj: ‘polo M hasta 60’, ‘jogger azul’, ‘CAM-01’."})

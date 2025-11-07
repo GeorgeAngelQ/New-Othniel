@@ -27,6 +27,7 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->successResponse([
+            'success'     => true,
             'user'         => $user,
             'access_token' => $token,
             'token_type'   => 'Bearer',

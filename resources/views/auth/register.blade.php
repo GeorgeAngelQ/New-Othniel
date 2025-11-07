@@ -52,7 +52,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
 
     const json = await res.json();
 
-    if (json.success) {
+    if (json.status === 'success' && json.data.success) {
         alert(json.message);
         window.location.href = '/login';
     } else {
