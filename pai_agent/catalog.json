@@ -1,0 +1,402 @@
+[
+    {
+        "id_product": 1,
+        "name": "Camisa Oxford",
+        "description": "Casaca importada de Europa con dise\u00f1o en la parte posterior",
+        "price": "155.99",
+        "stock": 99,
+        "image_url": "/storage/assets/CamisaOxford.jpeg",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-08T02:09:06.000000Z"
+    },
+    {
+        "id_product": 2,
+        "name": "Camisa Manga Larga",
+        "description": "Camisa de manga larga confeccionada en algod\u00f3n premium. Corte moderno y botones resistentes. Ideal para ocasiones casuales o de oficina.",
+        "price": "109.90",
+        "stock": 39,
+        "image_url": "/storage/assets/CamisaMangaLarga.jpeg",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 3,
+        "name": "Camisa Casual",
+        "description": "Camisa casual de algod\u00f3n suave con dise\u00f1o moderno. Perfecta para looks relajados de fin de semana.",
+        "price": "79.90",
+        "stock": 17,
+        "image_url": "/storage/assets/CamisaCasual.jpg",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 4,
+        "name": "Camisa Formal",
+        "description": "Camisa formal de corte slim con tejido de alta calidad. Ideal para oficina, eventos y reuniones.",
+        "price": "99.00",
+        "stock": 30,
+        "image_url": "/storage/assets/CamisaFormal.jpg",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 5,
+        "name": "Camisa Slim",
+        "description": "Camisa ajustada tipo slim fit con tejido el\u00e1stico que brinda comodidad y estilo contempor\u00e1neo.",
+        "price": "119.90",
+        "stock": 88,
+        "image_url": "/storage/assets/CamisaSlim.jpg",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 6,
+        "name": "Casaca Jeans",
+        "description": "Casaca de mezclilla resistente con acabado desgastado. Estilo cl\u00e1sico y vers\u00e1til para toda ocasi\u00f3n.",
+        "price": "159.90",
+        "stock": 56,
+        "image_url": "/storage/assets/CasacaJeans.webp",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 7,
+        "name": "Casaca Deportiva",
+        "description": "Casaca deportiva ligera con cierre completo y capucha ajustable. Perfecta para entrenamientos o uso urbano.",
+        "price": "189.90",
+        "stock": 9,
+        "image_url": "/storage/assets/CasacaDeportiva.webp",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 8,
+        "name": "Casaca Invierno",
+        "description": "Casaca acolchada para invierno con forro t\u00e9rmico y capucha desmontable. Abrigada y c\u00f3moda.",
+        "price": "249.90",
+        "stock": 56,
+        "image_url": "/storage/assets/CasacaInvierno.webp",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 9,
+        "name": "Casaca Rompeviento",
+        "description": "Casaca rompeviento impermeable con cierre frontal y bolsillos laterales. Ideal para climas ventosos o lluviosos.",
+        "price": "179.90",
+        "stock": 64,
+        "image_url": "/storage/assets/CasacaRompeviento.webp",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 10,
+        "name": "Casaca Cl\u00e1sica",
+        "description": "Casaca cl\u00e1sica de corte recto, confeccionada en algod\u00f3n grueso con forro interno suave.",
+        "price": "149.90",
+        "stock": 39,
+        "image_url": "/storage/assets/CasacaClasica.webp",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 11,
+        "name": "Pantal\u00f3n Jean",
+        "description": "Jean cl\u00e1sico de mezclilla azul con corte recto y leve elasticidad para m\u00e1xima comodidad.",
+        "price": "139.90",
+        "stock": 85,
+        "image_url": "/storage/assets/PantalonJean.webp",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 12,
+        "name": "Pantal\u00f3n Jogger T\u00e9cnico",
+        "description": "Pantal\u00f3n liviano con tejido t\u00e9cnico, bolsillos con cierre y pu\u00f1os ajustables. Ideal para uso urbano o deportivo.",
+        "price": "48.90",
+        "stock": 22,
+        "image_url": "/storage/assets/PantalonJoggerTecnico.webp",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 13,
+        "name": "Bermuda de Lino",
+        "description": "Bermuda de lino natural, transpirable y c\u00f3moda para climas c\u00e1lidos.",
+        "price": "34.50",
+        "stock": 28,
+        "image_url": "/storage/assets/BermudaLino.jpg",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 14,
+        "name": "Su\u00e9ter ligero de algod\u00f3n",
+        "description": "Su\u00e9ter liviano con textura suave y corte ajustado, ideal para media estaci\u00f3n.",
+        "price": "42.00",
+        "stock": 20,
+        "image_url": "/storage/assets/SueterLigeroAlgodon.avif",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 15,
+        "name": "Pantal\u00f3n cargo negro",
+        "description": "Pantal\u00f3n resistente de algod\u00f3n con m\u00faltiples bolsillos y corte recto moderno.",
+        "price": "46.00",
+        "stock": 26,
+        "image_url": "/storage/assets/PantalonCargoNegro.jpg",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 16,
+        "name": "Joggers premium",
+        "description": "Joggers confeccionados con mezcla de algod\u00f3n y elastano. Suaves, c\u00f3modos y con dise\u00f1o minimalista.",
+        "price": "44.99",
+        "stock": 30,
+        "image_url": "/storage/assets/JoggersPremium.jpeg",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 17,
+        "name": "Sudadera con cremallera",
+        "description": "Sudadera moderna con cierre completo, capucha ajustable y bolsillos laterales.",
+        "price": "52.00",
+        "stock": 18,
+        "image_url": "/storage/assets/SudaderaCremallera.jpeg",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 18,
+        "name": "Short de entrenamiento",
+        "description": "Short liviano con tecnolog\u00eda de secado r\u00e1pido, ideal para gimnasio o running.",
+        "price": "29.90",
+        "stock": 35,
+        "image_url": "/storage/assets/ShortEntrenamiento.webp",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 19,
+        "name": "Pantal\u00f3n de sastre casual",
+        "description": "Pantal\u00f3n con corte sastre, confeccionado en tejido el\u00e1stico para m\u00e1xima comodidad.",
+        "price": "58.50",
+        "stock": 16,
+        "image_url": "/storage/assets/PantalonSastreCasual.webp",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 20,
+        "name": "Chaleco utilitario",
+        "description": "Chaleco multifuncional con bolsillos frontales y cierres met\u00e1licos. Inspiraci\u00f3n urbana.",
+        "price": "49.90",
+        "stock": 14,
+        "image_url": "/storage/assets/ChalecoUtilitario.avif",
+        "created_at": "2025-10-07T05:01:41.000000Z",
+        "updated_at": "2025-10-07T05:01:41.000000Z"
+    },
+    {
+        "id_product": 21,
+        "name": "Pantal\u00f3n chino beige",
+        "description": "Pantal\u00f3n cl\u00e1sico de algod\u00f3n con corte moderno, ideal para ocasiones semi-formales.",
+        "price": "45.90",
+        "stock": 25,
+        "image_url": "/storage/assets/PantalonChinoBeige.jpg",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 22,
+        "name": "Jeans slim fit",
+        "description": "Jeans de mezclilla azul con ajuste entallado y detalles lavados.",
+        "price": "49.50",
+        "stock": 30,
+        "image_url": "/storage/assets/JeansSlimFit.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 23,
+        "name": "Joggers deportivos",
+        "description": "Joggers c\u00f3modos de algod\u00f3n con cintura el\u00e1stica y bolsillos laterales.",
+        "price": "34.99",
+        "stock": 28,
+        "image_url": "/storage/assets/JoggersDeportivo.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 24,
+        "name": "Pantal\u00f3n cargo verde oliva",
+        "description": "Pantal\u00f3n resistente con m\u00faltiples bolsillos y ajuste moderno.",
+        "price": "44.00",
+        "stock": 20,
+        "image_url": "/storage/assets/PantalonCargoVerdeOliva.png",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 25,
+        "name": "Short de algod\u00f3n",
+        "description": "Short ligero de algod\u00f3n, ideal para d\u00edas de verano.",
+        "price": "27.50",
+        "stock": 35,
+        "image_url": "/storage/assets/ShortAlgodon.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 26,
+        "name": "Bermuda de mezclilla",
+        "description": "Bermuda de denim azul con efecto desgastado y ruedo doblado.",
+        "price": "32.90",
+        "stock": 22,
+        "image_url": "/storage/assets/BermudaMezclilla.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 27,
+        "name": "Su\u00e9ter de punto grueso",
+        "description": "Su\u00e9ter c\u00e1lido de punto con textura trenzada y cuello redondo.",
+        "price": "55.00",
+        "stock": 18,
+        "image_url": "/storage/assets/SueterPuntoGrueso.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 28,
+        "name": "Sudadera con capucha",
+        "description": "Sudadera deportiva con capucha ajustable y bolsillo frontal tipo canguro.",
+        "price": "39.99",
+        "stock": 26,
+        "image_url": "/storage/assets/SudaderoCapucha.jpeg",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 29,
+        "name": "Pantal\u00f3n jogger cargo",
+        "description": "Jogger h\u00edbrido con estilo cargo, bolsillos laterales y pu\u00f1os ajustados.",
+        "price": "42.50",
+        "stock": 24,
+        "image_url": "/storage/assets/PantalonJoggerCargo.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 30,
+        "name": "Chaleco acolchado ligero",
+        "description": "Chaleco t\u00e9rmico con cierre frontal y bolsillos ocultos.",
+        "price": "46.90",
+        "stock": 15,
+        "image_url": "/storage/assets/ChalecoAcolchadoLigero.jpg",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 31,
+        "name": "Pantal\u00f3n de vestir",
+        "description": "Pantal\u00f3n formal con pinzas, ideal para oficina o eventos especiales.",
+        "price": "52.00",
+        "stock": 19,
+        "image_url": "/storage/assets/PantalonVestir.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 32,
+        "name": "Short deportivo",
+        "description": "Short de poli\u00e9ster transpirable, perfecto para entrenamientos o uso casual.",
+        "price": "25.90",
+        "stock": 40,
+        "image_url": "/storage/assets/ShortDeportivo.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 33,
+        "name": "Pantal\u00f3n jogger de franela",
+        "description": "Pantal\u00f3n suave de franela con pretina el\u00e1stica y cord\u00f3n ajustable.",
+        "price": "37.80",
+        "stock": 22,
+        "image_url": "/storage/assets/PantalonJoggerFranela.jpeg",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 34,
+        "name": "Sudadera sin capucha",
+        "description": "Sudadera cl\u00e1sica de corte recto con cuello redondo.",
+        "price": "35.00",
+        "stock": 27,
+        "image_url": "/storage/assets/SudaderaCapucha.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 35,
+        "name": "Pantal\u00f3n de lino",
+        "description": "Pantal\u00f3n ligero de lino con corte relajado, ideal para climas c\u00e1lidos.",
+        "price": "43.20",
+        "stock": 20,
+        "image_url": "/storage/assets/PantalonLino.jpeg",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 36,
+        "name": "Su\u00e9ter cuello alto",
+        "description": "Su\u00e9ter elegante de cuello alto con acabado fino y suave al tacto.",
+        "price": "54.90",
+        "stock": 17,
+        "image_url": "/storage/assets/SueterCuelloAlto.webp",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 37,
+        "name": "Pantal\u00f3n jogger denim",
+        "description": "Jogger moderno con tejido de mezclilla el\u00e1stica y pu\u00f1os ajustados.",
+        "price": "41.50",
+        "stock": 23,
+        "image_url": "/storage/assets/PantalonJoggerDenim.jpeg",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 38,
+        "name": "Short cargo",
+        "description": "Short con m\u00faltiples bolsillos laterales y cinturilla ajustable.",
+        "price": "29.99",
+        "stock": 30,
+        "image_url": "/storage/assets/ShortCargo.jpeg",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 39,
+        "name": "Sudadera oversize",
+        "description": "Sudadera unisex de corte amplio, confeccionada en algod\u00f3n suave.",
+        "price": "38.70",
+        "stock": 25,
+        "image_url": "/storage/assets/SudaderoOversize.jpeg",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    },
+    {
+        "id_product": 40,
+        "name": "Pantal\u00f3n t\u00e9rmico",
+        "description": "Pantal\u00f3n ajustado de tela t\u00e9rmica, ideal para d\u00edas fr\u00edos o actividades al aire libre.",
+        "price": "36.90",
+        "stock": 18,
+        "image_url": "/storage/assets/PantalonTermico.jpg",
+        "created_at": "2025-10-28T02:40:05.000000Z",
+        "updated_at": "2025-10-28T02:40:05.000000Z"
+    }
+]
