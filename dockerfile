@@ -26,7 +26,7 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Instalar dependencias de Python del agente
-RUN pip3 install --no-cache-dir -r pai_agent/requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r pai_agent/requirements.txt
 
 # Copiar entrypoint
 COPY entrypoint.sh /entrypoint.sh
