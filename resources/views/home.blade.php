@@ -57,7 +57,7 @@
     </div>
 
     <!-- Input -->
-     <div id="agentMessages" class="p-3 h-64 overflow-y-auto bg-gray-50 space-y-2"></div>
+    <div id="agentMessages" class="p-3 h-64 overflow-y-auto bg-gray-50 space-y-2"></div>
     <div class="border-t border-gray-200 flex">
         <input id="agentQ"
             placeholder="Escribe aquí..."
@@ -153,5 +153,9 @@
 
     @endsection
     @section('scripts')
-    @vite('resources/js/pages/home.js')
+    @vite([
+    'resources/css/app.css',
+    'resources/js/app.js',
+    'resources/js/pages/home.js'
+    ])
     @endsection
