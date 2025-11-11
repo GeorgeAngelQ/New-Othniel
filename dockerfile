@@ -1,32 +1,37 @@
-# Imagen PHP + Apache
+# Imagen base PHP + Apache
 FROM php:8.2-apache
 
-# Instalar dependencias necesarias
+# Instalar dependencias del sistema + Python
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libzip-dev \
-    libonig-dev \
-    libpq-dev \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath
+    git unzip libzip-dev libpq-dev libonig-dev \
+    python3 python3-pip \
+    && docker-php-ext-install pdo pdo_mysql mbstring zip bcmath
 
-# Habilitar mod_rewrite de Apache (necesario para Laravel)
+# Habilitar mod_rewrite en Apache para Laravel
 RUN a2enmod rewrite
 
-# Instalar Composer
+# Instalar Composer dentro del contenedor
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copiar código Laravel
+# Establecer directorio de trabajo
 WORKDIR /var/www/html
+
+# Copiar todo el proyecto al contenedor
 COPY . .
 
-# Instalar dependencias Laravel
-RUN composer install --no-dev --prefer-dist --optimize-autoloader
+# Instalar dependencias de Laravel
+RUN composer install --no-dev --optimize-autoloader
 
-# Dar permisos a storage y cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Dar permisos a storage y bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Exponer puerto
+# Instalar dependencias de Python del agente
+RUN pip3 install --no-cache-dir -r pai_agent/requirements.txt
+
+# Copiar entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["/entrypoint.sh"]
