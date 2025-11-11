@@ -15,25 +15,25 @@ RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-avail
 # ---- INSTALAR COMPOSER ----
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# ---- COPIAR SOLO PACKAGE.JSON PARA CACHE ----
 WORKDIR /var/www/html
-COPY package.json package-lock.json ./
 
-# ---- NODE PARA COMPILAR VITE ----
+# ---- COPIAR ARCHIVOS PARA CACHE ----
+COPY package.json package-lock.json vite.config.js ./
+
+# ---- INSTALAR NODE ----
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
 # Instalar dependencias frontend
 RUN npm ci --legacy-peer-deps
 
-# ---- COPIAR RESTO DEL PROYECTO ----
 COPY . .
 
-# Compilar assets con Vite (genera public/build/manifest.json)
+# Compilar assets con Vite
 RUN npm run build
 
 # ---- DEPENDENCIAS LARAVEL ----
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # ---- DEPENDENCIAS PYTHON DEL AGENTE ----
 RUN pip3 install --no-cache-dir --break-system-packages -r pai_agent/requirements.txt
