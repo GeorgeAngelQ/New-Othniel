@@ -17,7 +17,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# ---- COPIAR ARCHIVOS PARA CACHE ----
+# ---- PRIMERA COPIA solo package.json para cache ----
 COPY package.json package-lock.json vite.config.js ./
 
 # ---- INSTALAR NODE ----
@@ -27,9 +27,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Instalar dependencias frontend
 RUN npm ci --legacy-peer-deps
 
+# ---- COPIAR ARCHIVOS DE LARAVEL (SIN PUBLIC/BUILD TODAVÍA) ----
 COPY . .
 
-# Compilar assets con Vite
+# Compilar assets con Vite (AQUÍ se crea manifest.json)
 RUN npm run build
 
 # ---- DEPENDENCIAS LARAVEL ----
@@ -39,7 +40,8 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN pip3 install --no-cache-dir --break-system-packages -r pai_agent/requirements.txt
 
 # ---- PERMISOS ----
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache \
+         && chmod -R 755 public/build
 
 EXPOSE 80
 
