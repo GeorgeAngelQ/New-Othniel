@@ -6,13 +6,9 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js', 'resources/js/pages/home.js'],
-            refresh: true,
+            buildDirectory: 'build',
+            refresh: true
         }),
         tailwindcss(),
     ],
-        build: {
-        outDir: 'public/build',
-        manifest: true,
-        emptyOutDir: true,
-    },
 });
