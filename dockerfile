@@ -1,35 +1,32 @@
-# Usamos la imagen oficial de PHP con Apache
+# Imagen PHP + Apache
 FROM php:8.2-apache
 
-# Instalamos dependencias del sistema
+# Instalar dependencias necesarias
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libzip-dev \
-    libpq-dev \
     libonig-dev \
-    python3 \
-    python3-pip \
+    libpq-dev \
     && docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath
 
-# Habilitamos mod_rewrite de Apache
+# Habilitar mod_rewrite de Apache (necesario para Laravel)
 RUN a2enmod rewrite
 
-# Instalamos Composer
+# Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copiamos el código de Laravel al contenedor
+# Copiar código Laravel
 WORKDIR /var/www/html
 COPY . .
 
-# Instalamos dependencias de Laravel
-RUN composer install --no-dev --optimize-autoloader
+# Instalar dependencias Laravel
+RUN composer install --no-dev --prefer-dist --optimize-autoloader
 
-# Instalamos dependencias de Python (si tienes requirements.txt)
-RUN pip3 install --no-cache-dir -r flask flask-cors jsonify requests blueprint
+# Dar permisos a storage y cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Exponemos el puerto 80
+# Exponer puerto
 EXPOSE 80
 
-# Comando por defecto para iniciar Apache
 CMD ["apache2-foreground"]
