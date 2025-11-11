@@ -28,6 +28,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && npm install --force \
     && npm run build
 
+# Instalar dependencias del frontend
+RUN npm ci --legacy-peer-deps && npm run build
+
 # Instalar dependencias Laravel
 RUN composer install --no-dev --optimize-autoloader
 
