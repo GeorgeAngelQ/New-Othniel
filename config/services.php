@@ -43,4 +43,10 @@ return [
             'api_url' => env('COINGATE_API_URL', 'https://api-sandbox.coingate.com/v2'),
         'auth_token' => env('COINGATE_AUTH_TOKEN'),
     ],
+    'paypal' => [
+    'client_id' => env('PAYPAL_CLIENT_ID'),
+    'secret' => env('PAYPAL_SECRET'),
+    'mode' => env('PAYPAL_MODE', 'sandbox'),
+    ],
+
 ];

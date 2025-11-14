@@ -25,19 +25,65 @@
                 <img src="https://imagestis2025.s3.us-east-2.amazonaws.com/MercadoPago.png" alt="MercadoPago" class="w-48 h-auto">
             </button>
             <button
-                onclick="redirectToPayPal()"
-                class="w-70 h-36 bg-white rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center transition duration-200">
-                <img src="https://imagestis2025.s3.us-east-2.amazonaws.com/PayPal.png" alt="PayPal" class="w-48 h-auto">
-            </button>
-            <button
                 onclick="redirectToCoinGate()"
                 class="w-70 h-36 bg-white rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center transition duration-200">
                 <img src="https://imagestis2025.s3.us-east-2.amazonaws.com/Coingate.png" alt="CoinGate" class="w-48 h-auto">
             </button>
+            <div id="paypal-button-container" class="w-full mt-4"></div>
         </div>
     </div>
 </div>
 @endsection
+<script src="{{ asset('js/payments-core.js') }}"></script>
+<script src="https://www.paypal.com/sdk/js?client-id={{ config('services.paypal.client_id') }}&currency=USD"></script>
+
+<script>
+paypal.Buttons({
+
+    createOrder: function (data, actions) {
+    const totalPEN = PaymentsCore.totals().tot;
+    const totalUSD = PaymentsCore.PENtoUSD(totalPEN);
+
+    return fetch('/paypal/create-order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ amount_usd: totalUSD })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.id) return data.id;
+        throw new Error(data.error || 'Error creando orden PayPal');
+    });
+},
+
+
+
+    onApprove: function (data, actions) {
+        return fetch('/paypal/capture-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ order_id: data.orderID })
+        })
+        .then(res => res.json())
+        .then(response => {
+            PaymentsCore.clearCart();
+            alert("Pago exitoso con PayPal");
+        });
+    },
+
+    onError: function (err) {
+        console.error(err);
+        alert("Error en PayPal");
+    }
+
+}).render('#paypal-button-container');
+</script>
 
 <script>
     async function createOrder(id_cart) {
@@ -50,16 +96,17 @@
                 "Authorization": `Bearer ${token}`,
                 "Accept": "application/json "
             },
-            body: JSON.stringify({ id_cart: id_cart })
+            body: JSON.stringify({
+                id_cart: id_cart
+            })
         });
 
         const data = await res.json();
 
         if (data.status === "success" && data.order) {
-            console.log("Orden creada:", data.order);
             return data.order;
         } else {
-            alert("Error al crear la orden: " + data.message +" Data cart:"+ data.cart);
+            alert("Error al crear la orden: " + data.message + " Data cart:" + data.cart);
             throw new Error(data.message + data.cart);
         }
     }
@@ -89,7 +136,7 @@
             alert("Error en el flujo de pago.");
         }
     }
-        async function redirectToCoinGate() {
+    async function redirectToCoinGate() {
         try {
             const order = await createOrder();
 

@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (res.ok && json.data) {
                 id_cart = json.data.id_cart;
                 localStorage.setItem("id_cart", id_cart);
-                console.log("Carrito activo:", json.data);
             } else {
                 console.error("No se pudo obtener el carrito:", json);
             }
@@ -182,10 +181,7 @@ async function addToCart(id_product, quantity = 1, unitPrice = 0) {
         const data = await response.json();
         if (response.ok) {
             alert("🛒 Producto agregado al carrito");
-            console.log("Detalle del carrito:", data);
         } else {
-            console.log(id_product);
-            console.log(id_cart);
             console.error("Error al agregar:", data);
             alert(data.message || "No se pudo agregar el producto");
         }

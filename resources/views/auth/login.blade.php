@@ -47,8 +47,6 @@
 
             const json = await res.json();
 
-            console.log("Respuesta del backend:", json);
-
             if (res.ok && json.data && json.data.access_token) {
                 localStorage.setItem("token", json.data.access_token);
                 localStorage.setItem("id_cart", json.data.id_cart);

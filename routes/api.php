@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartDetailController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PayPalController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -32,7 +33,7 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::middleware('role:user')->group(function () {
-            Route::apiResource('products', ProductController::class)->except(['store','update','destroy']);
+            Route::apiResource('products', ProductController::class)->except(['store', 'update', 'destroy']);
             Route::apiResource('carts', CartController::class);
             Route::delete('carts/clear', [CartController::class, 'clear']);
             Route::apiResource('cart-details', CartDetailController::class)->except(['show', 'edit', 'create']);
@@ -41,5 +42,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/payments/mercadopago/{id_order}', [PaymentController::class, 'createPreferenceMercadoPago']);
             Route::get('/payments/coingate/{id_order}', [PaymentController::class, 'createOrderCrypto']);
         });
+        Route::get('/paypal/success', [PayPalController::class, 'success'])->name('paypal.success');
+        Route::get('/paypal/cancel', [PayPalController::class, 'cancel'])->name('paypal.cancel');
     });
 });
