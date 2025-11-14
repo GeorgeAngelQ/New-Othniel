@@ -17,7 +17,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# ---- COPIAR ARCHIVOS NECESARIOS PARA CACHE DE NODE ----
+# ---- COPIAR PARA CACHE ----
 COPY package.json package-lock.json vite.config.js ./
 
 # ---- INSTALAR NODE ----
@@ -27,26 +27,30 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Instalar dependencias frontend
 RUN npm ci --legacy-peer-deps
 
-# ---- COPIAR TODO EL PROYECTO ----
+# ---- COPIAR PROYECTO COMPLETO ----
 COPY . .
 
-# 🔥 Copiar las imágenes a storage en el contenedor
-COPY storage/app/public/assets storage/app/public/assets
+# --- COPIAR IMÁGENES DEL STORAGE ---
+# Copia todo lo que tengas en storage/app/public hacia el contenedor
+COPY storage/app/public storage/app/public
 
-# ---- COMPILAR ASSETS ANTES DE INSTALAR DEPENDENCIAS PHP ----
-RUN npm run build
+# --- COPIAR IMÁGENES A PUBLIC/STORAGE (Render no soporta symlink) ---
+RUN mkdir -p public/storage && cp -R storage/app/public/* public/storage/
 
 # ---- INSTALAR DEPENDENCIAS PHP ----
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# ---- CREAR STORAGE LINK ----
-RUN php artisan storage:link
+# ---- NO USAR storage:link en render ----
+# RUN php artisan storage:link
 
-# ---- INSTALAR DEPENDENCIAS PYTHON DEL AGENTE ----
+# ---- COMPILAR ASSETS ----
+RUN npm run build
+
+# ---- DEPENDENCIAS PYTHON DEL AGENTE ----
 RUN pip3 install --no-cache-dir --break-system-packages -r pai_agent/requirements.txt
 
 # ---- PERMISOS ----
-RUN chown -R www-data:www-data storage bootstrap/cache public/build
+RUN chown -R www-data:www-data storage bootstrap/cache public/build public/storage
 
 EXPOSE 80
 CMD ["apache2-foreground"]
