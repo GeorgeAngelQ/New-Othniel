@@ -31,7 +31,7 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 
 # 🔥 Copiar las imágenes a storage en el contenedor
-COPY storage/app/public storage/app/public
+COPY storage/app/public/assets storage/app/public/assets
 
 # ---- COMPILAR ASSETS ANTES DE INSTALAR DEPENDENCIAS PHP ----
 RUN npm run build
