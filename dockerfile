@@ -17,7 +17,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# ---- COPIAR PARA CACHE ----
+# ---- COPIAR ARCHIVOS NECESARIOS PARA CACHE DE NODE ----
 COPY package.json package-lock.json vite.config.js ./
 
 # ---- INSTALAR NODE ----
@@ -27,19 +27,22 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Instalar dependencias frontend
 RUN npm ci --legacy-peer-deps
 
-# ---- COPIAR PROYECTO COMPLETO ----
+# ---- COPIAR TODO EL PROYECTO ----
 COPY . .
 
-# ---- INSTALAR DEPENDENCIAS PHP (ANTES DEL STORAGE LINK) ----
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# 🔥 Copiar las imágenes a storage en el contenedor
+COPY storage/app/public storage/app/public
 
-# ---- CREAR STORAGE LINK DESPUÉS DE COMPOSER ----
-RUN php artisan storage:link
-
-# ---- COMPILAR ASSETS DESPUÉS DE STORAGE LINK ----
+# ---- COMPILAR ASSETS ANTES DE INSTALAR DEPENDENCIAS PHP ----
 RUN npm run build
 
-# ---- DEPENDENCIAS PYTHON DEL AGENTE ----
+# ---- INSTALAR DEPENDENCIAS PHP ----
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# ---- CREAR STORAGE LINK ----
+RUN php artisan storage:link
+
+# ---- INSTALAR DEPENDENCIAS PYTHON DEL AGENTE ----
 RUN pip3 install --no-cache-dir --break-system-packages -r pai_agent/requirements.txt
 
 # ---- PERMISOS ----
