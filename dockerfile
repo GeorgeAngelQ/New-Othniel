@@ -30,21 +30,8 @@ RUN npm ci --legacy-peer-deps
 # ---- COPIAR PROYECTO COMPLETO ----
 COPY . .
 
-# --- COPIAR IMÁGENES DEL STORAGE ---
-# (no fallará si la carpeta está vacía o no existe)
-COPY storage/app/public /var/www/html/storage/app/public
-
-# --- COPIAR A PUBLIC/STORAGE (Render no soporta symlink) ---
-RUN mkdir -p public/storage \
-    && if [ -d "storage/app/public" ]; then \
-           cp -R storage/app/public/* public/storage/ 2>/dev/null || true; \
-       fi
-
 # ---- INSTALAR DEPENDENCIAS PHP ----
 RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# ---- NO USAR storage:link en Render ----
-# RUN php artisan storage:link
 
 # ---- COMPILAR ASSETS ----
 RUN npm run build
