@@ -94,7 +94,7 @@
             addMessage("user", msg);
 
             try {
-                const res = await fetch("http://127.0.0.1:5000/agent/chat", {
+                const res = await fetch("https://new-othniel.onrender.com/agent/chat", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
