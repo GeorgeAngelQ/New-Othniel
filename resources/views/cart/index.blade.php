@@ -22,17 +22,17 @@
             <button
                 onclick="redirectToMercadoPago()"
                 class="w-70 h-36 bg-white rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center transition duration-200">
-                <img src="/storage/assets/MercadoPago.png" alt="MercadoPago" class="w-48 h-auto">
+                <img src="https://imagestis2025.s3.us-east-2.amazonaws.com/MercadoPago.png" alt="MercadoPago" class="w-48 h-auto">
             </button>
             <button
                 onclick="redirectToPayPal()"
                 class="w-70 h-36 bg-white rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center transition duration-200">
-                <img src="/storage/assets/PayPal.png" alt="PayPal" class="w-48 h-auto">
+                <img src="https://imagestis2025.s3.us-east-2.amazonaws.com/PayPal.png" alt="PayPal" class="w-48 h-auto">
             </button>
             <button
                 onclick="redirectToCoinGate()"
                 class="w-70 h-36 bg-white rounded-2xl shadow-md hover:shadow-lg flex items-center justify-center transition duration-200">
-                <img src="/storage/assets/Coingate.png" alt="CoinGate" class="w-48 h-auto">
+                <img src="https://imagestis2025.s3.us-east-2.amazonaws.com/Coingate.png" alt="CoinGate" class="w-48 h-auto">
             </button>
         </div>
     </div>

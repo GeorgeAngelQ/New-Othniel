@@ -1,7 +1,7 @@
 <nav class="bg-[#f0e8e0] border-b border-[#d9c8b6]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
-            <img src="/storage/assets/OthinelLogo3.png" class="h-35 w-25 full object-cover" alt="Logo">
+            <img src="https://imagestis2025.s3.us-east-2.amazonaws.com/OthinelLogo3.png" class="h-35 w-25 full object-cover" alt="Logo">
             <!-- Nombre de la tienda -->
             <a href="{{ url('/') }}" class="text-2xl font-semibold text-[#5c4033] hover:text-[#3e2a20] transition">
                 Othniel Store
