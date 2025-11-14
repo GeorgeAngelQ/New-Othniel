@@ -30,14 +30,14 @@ RUN npm ci --legacy-peer-deps
 # ---- COPIAR PROYECTO COMPLETO ----
 COPY . .
 
-# --- CREAR EL STORAGE LINK ---
+# ---- INSTALAR DEPENDENCIAS PHP (ANTES DEL STORAGE LINK) ----
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# ---- CREAR STORAGE LINK DESPUÉS DE COMPOSER ----
 RUN php artisan storage:link
 
-# ---- COMPILAR ASSETS (AQUÍ se crea manifest.json + build/assets) ----
+# ---- COMPILAR ASSETS DESPUÉS DE STORAGE LINK ----
 RUN npm run build
-
-# ---- INSTALAR DEPENDENCIAS PHP LUEGO DEL BUILD ----
-RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # ---- DEPENDENCIAS PYTHON DEL AGENTE ----
 RUN pip3 install --no-cache-dir --break-system-packages -r pai_agent/requirements.txt
