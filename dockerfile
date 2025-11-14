@@ -30,6 +30,9 @@ RUN npm ci --legacy-peer-deps
 # ---- COPIAR PROYECTO COMPLETO ----
 COPY . .
 
+# --- CREAR EL STORAGE LINK ---
+RUN php artisan storage:link
+
 # ---- COMPILAR ASSETS (AQUÍ se crea manifest.json + build/assets) ----
 RUN npm run build
 
