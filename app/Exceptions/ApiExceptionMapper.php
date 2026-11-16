@@ -11,11 +11,12 @@ use Illuminate\Validation\ValidationException;
 
 use Illuminate\Auth\AuthenticationException;
 
-use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Auth\Access\AuthorizationException;
 
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class AppExceptionMapper
 {
@@ -41,14 +42,15 @@ class AppExceptionMapper
             $e instanceof BadRequestException => [
                 'status' => $e->errorType()->status(),
                 'error_code' => $e->errorType()->value,
-                'message' => $e->getMessage(),
+                'message' => __('validation.bad_request'),
                 'records' => $e->errors(),
                 'context' => $e->context(),
             ],
             $e instanceof ValidationException => [
                 'status' => ErrorType::VALIDATION->status(),
                 'error_code' => ErrorType::VALIDATION->value,
-                'message' => $e->getMessage(),
+                'message' => __('validation.failed'),
+                'errors' => $e->errors(),
             ],
 
 
@@ -61,7 +63,7 @@ class AppExceptionMapper
 
 
             // ================= AUTORIZACIÓN =================
-            $e instanceof UnauthorizedException => [
+            $e instanceof AuthorizationException => [
                 'status' => ErrorType::FORBIDDEN->status(),
                 'error_code' => ErrorType::FORBIDDEN->value,
                 'message' => __('auth.forbidden'),
@@ -70,6 +72,11 @@ class AppExceptionMapper
 
             // ================= HTTP / FRAMEWORK =================
             $e instanceof NotFoundHttpException => [
+                'status' => ErrorType::NOT_FOUND->status(),
+                'error_code' => ErrorType::NOT_FOUND->value,
+                'message' => __('general.not_found'),
+            ],
+            $e instanceof ModelNotFoundException => [
                 'status' => ErrorType::NOT_FOUND->status(),
                 'error_code' => ErrorType::NOT_FOUND->value,
                 'message' => __('general.not_found'),
