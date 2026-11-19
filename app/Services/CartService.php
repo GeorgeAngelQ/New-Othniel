@@ -7,8 +7,17 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
+use App\Repository\CartRepository;
+
 class CartService
 {
+    public CartRepository $cartRepository;
+
+    public function __construct(CartRepository $cartRepository)
+    {
+        $this->cartRepository = $cartRepository;
+    }
+
     public function getAllCarts(array $filters = []): Collection
     {
          $query = Cart::query();
@@ -29,26 +38,22 @@ class CartService
 
         return $query->with(['users', 'cartDetails'])->get();
     }
-    public function getCartById(int $id_cart): ?Cart
-    {
-        return Cart::with(['users', 'cartDetails.product'])->findOrFail($id_cart);
-    }
-    public function createCart(array $data): Cart
-    {
-        return DB::transaction(function () use ($data) {
-            $user = Auth::guard('sanctum')->user();
 
-            if (!$user) {
-                throw new \Exception('Usuario no autenticado');
-            }
-
-            return Cart::create([
-                'id_user' => $user->id_user,
-                'total' => $data['total'] ?? 0,
-                'status' => $data['status'] ?? 'active',
-            ]);
-        });
+    public function getCartByUserId(int $id_user): ?Cart
+    {
+        return $this->cartRepository->getCartByUserId($id_user);
     }
+
+    public function createCart(): Cart
+    {
+        $user = auth('sanctum')->user();
+        return $this->cartRepository->createCart([
+            'id_user' => $user->id_user,
+            'total' => 0,
+            'status' => 'active',
+        ]);
+    }
+
     public function updateCart(Cart $cart, array $data): Cart
     {
         return DB::transaction(function () use ($cart, $data) {

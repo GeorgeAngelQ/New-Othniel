@@ -7,9 +7,28 @@ use App\Models\CartDetail;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
+use App\Exceptions\BusinessRules\NotFoundException;
+use App\Exceptions\BusinessRules\BusinessException;
+
+use App\Repository\CartRepository;
+use App\Repository\CartDetailRepository;
+use App\Repository\ProductRepository;
 
 class CartDetailService
 {
+    public CartRepository $cartRepository;
+    public CartDetailRepository $cartDetailRepository;
+    public ProductRepository $productRepository;
+
+    public function __construct(
+        CartRepository $cartRepository,
+        CartDetailRepository $cartDetailRepository,
+        ProductRepository $productRepository
+    ) {
+        $this->cartRepository = $cartRepository;
+        $this->cartDetailRepository = $cartDetailRepository;
+        $this->productRepository = $productRepository;
+    }
     public function addProductToCart(array $data): CartDetail
     {
         return DB::transaction(function () use ($data) {
@@ -43,6 +62,27 @@ class CartDetailService
             $this->updateCartTotal($cart);
             return $cartDetail;
         });
+    }
+
+    public function addProductToCartSecond(int $id_user, int $id_product, int $quantity)
+    {
+        $product = $this->productRepository->findById($id_product);
+        if (!$product) throw new NotFoundException('Product not found');
+        if ($product-> stock < $quantity) throw new BusinessException('Product ' . $product->name . ' has insufficient stock');
+
+        if ($this->cartRepository->findByUserId($id_user)) {
+            $cart = $this->cartRepository->findByUserId($id_user);
+        } else {
+            $cart = $this->cartRepository->createCart([
+                'id_user' => $id_user,
+                'total' => 0,
+                'status' => 'active',
+            ]);
+        }
+
+        
+
+
     }
     public function updateCartDetail(CartDetail $cartDetail, array $data): CartDetail
     {
