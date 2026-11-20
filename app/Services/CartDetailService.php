@@ -29,47 +29,9 @@ class CartDetailService
         $this->cartDetailRepository = $cartDetailRepository;
         $this->productRepository = $productRepository;
     }
-    public function addProductToCart(array $data): CartDetail
-    {
-        return DB::transaction(function () use ($data) {
-            $cart = Cart::findOrFail($data['id_cart']);
-            $product = Product::findOrFail($data['id_product']);
-            $quantity = $data['quantity'];
-            if ($quantity <= 0) {
-                throw new \InvalidArgumentException('La cantidad debe ser mayor que cero.');
-            }
-            if ($quantity > $product->stock) {
-                throw new \InvalidArgumentException('No hay suficiente stock para el producto solicitado.');
-            }
-            $unitPrice = $product->price;
-            $subtotal = $unitPrice * $quantity;
-            $cartDetail = CartDetail::where('id_cart', $cart->id_cart)
-                ->where('id_product', $product->id_product)
-                ->first();
-            if ($cartDetail) {
-                $cartDetail->quantity += $quantity;
-                $cartDetail->subtotal = $cartDetail->quantity * $unitPrice;
-                $cartDetail->save();
-            } else {
-                $cartDetail = CartDetail::create([
-                    'id_cart' => $cart->id_cart,
-                    'id_product' => $product->id_product,
-                    'quantity' => $quantity,
-                    'unit_price' => $unitPrice,
-                    'subtotal' => $subtotal,
-                ]);
-            }
-            $this->updateCartTotal($cart);
-            return $cartDetail;
-        });
-    }
 
-    public function addProductToCartSecond(int $id_user, int $id_product, int $quantity)
+    public function findOrCreateCartByUserId(int $id_user): int
     {
-        $product = $this->productRepository->findById($id_product);
-        if (!$product) throw new NotFoundException('Product not found');
-        if ($product-> stock < $quantity) throw new BusinessException('Product ' . $product->name . ' has insufficient stock');
-
         if ($this->cartRepository->findByUserId($id_user)) {
             $cart = $this->cartRepository->findByUserId($id_user);
         } else {
@@ -79,11 +41,25 @@ class CartDetailService
                 'status' => 'active',
             ]);
         }
+        $id_cart = $cart->id_cart;
+        return $id_cart;
+    }
+
+    public function addProductToCart(int $id_cart, int $id_product, int $quantity)
+    {
+        $product = $this->productRepository->findById($id_product);
+        if (!$product) throw new NotFoundException('Product not found');
+        if ($product-> stock < $quantity) throw new BusinessException('Product ' . $product->name . ' has insufficient stock');
+
+        $cartItem = $this->cartDetailRepository->findByCartIdAndProductId($id_cart, $id_product);
+        if (!$cartItem) throw new NotFoundException('Product not found in cart');
 
         
 
 
     }
+
+
     public function updateCartDetail(CartDetail $cartDetail, array $data): CartDetail
     {
         return DB::transaction(function () use ($cartDetail, $data) {
