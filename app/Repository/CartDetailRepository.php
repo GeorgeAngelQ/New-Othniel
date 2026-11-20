@@ -18,6 +18,16 @@ class CartDetailRepository
     {
 
     }
+
+    public function findByCartIdAndProductId(int $id_cart, int $id_product): ?CartDetail
+    {
+        return CartDetail::where('cart_details.id_cart', $id_cart)
+            ->where('cart_details.id_product', $id_product)
+            ->join('carts', 'cart_details.id_cart', '=', 'carts.id_cart')
+            ->where('carts.status', 'active')
+            ->select('cart_details.*')
+            ->first();
+    }
     public function updateCartDetail(CartDetail $cartDetail, array $data): CartDetail
     {
         return DB::transaction(function () use ($cartDetail, $data) {
