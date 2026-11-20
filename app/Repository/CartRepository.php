@@ -10,7 +10,7 @@ class CartRepository {
     }
     public function findByUserId(int $id_user): ?Cart
     {
-        return Cart::where('id_user', $id_user)->first();
+        return Cart::where('id_user', $id_user)->where('status', 'active')->first();
     }
     public function getCartById(int $id_cart): ?Cart
     {
@@ -18,7 +18,7 @@ class CartRepository {
     }
     public function getCartByUserId(int $id_user): ?Cart
     {
-        return Cart::with('cartDetails.product')->where('id_user', $id_user)->first();
+        return Cart::with('cartDetails.product')->where('id_user', $id_user)->where('status', 'active')->first();
     }
     public function createCart(array $data): Cart
     {
