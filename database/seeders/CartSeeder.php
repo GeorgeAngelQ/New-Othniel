@@ -15,7 +15,7 @@ class CartSeeder extends Seeder
         foreach ($users as $user) {
             Cart::factory(fake()->numberBetween(1, 2))->create([
                 'id_user' => $user->id_user,
-                'status' => fake()->randomElement(['active', 'completed']),
+                'status' => fake()->randomElement(['active', 'pending','converted','abandoned','expired','cancelled']),
             ]);
         }
     }
