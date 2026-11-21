@@ -15,9 +15,8 @@ class CartService
         $this->cartRepository = $cartRepository;
     }
 
-    public function getMyCart(): Cart
+    public function getMyCart(int $id_user): Cart
     {
-        $id_user = auth('sanctum')->id();
         return $this->cartRepository->findByUserIdWithDetails($id_user);
     }
 
