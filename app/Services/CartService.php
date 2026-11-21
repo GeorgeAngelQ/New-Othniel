@@ -3,71 +3,56 @@
 namespace App\Services;
 
 use App\Models\Cart;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-
 use App\Repository\CartRepository;
+use App\Enums\CartStatus;
 
 class CartService
 {
-    public CartRepository $cartRepository;
+    private CartRepository $cartRepository;
 
     public function __construct(CartRepository $cartRepository)
     {
         $this->cartRepository = $cartRepository;
     }
 
-    public function getAllCarts(array $filters = []): Collection
+    public function getMyCArt(): Cart
     {
-         $query = Cart::query();
+        $id_user = auth('sanctum')->id();
+        return $this->cartRepository->findByUserIdWithDetails($id_user);
+    }
 
-        // Si no se pasa un filtro, usar el usuario autenticado
-        if (isset($filters['id_user'])) {
-            $query->where('id_user', $filters['id_user']);
-        } else {
-            $user = Auth::guard('sanctum')->user();
-            if ($user) {
-                $query->where('id_user', $user->id_user);
-            }
+    public function findOrCreateCartByUserId(int $id_user): Cart
+    {
+        $cart = $this->cartRepository->findByUserId($id_user);
+
+        if ($cart === null) {
+            $cart = $this->cartRepository->createCart([
+                'id_user' => $id_user,
+                'total' => 0,
+                'status' => CartStatus::ACTIVE->value
+            ]);
         }
-
-        if (isset($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
-
-        return $query->with(['users', 'cartDetails'])->get();
+        return $cart;
     }
 
-    public function getCartByUserId(int $id_user): ?Cart
+    public function updateCart(int $id_user, string $status): Cart
     {
-        return $this->cartRepository->getCartByUserId($id_user);
+        $cart = $this->cartRepository->findByUserId($id_user);
+        $this->cartRepository->updateCart($cart->id_cart, ['status' => $status]);
+        $cart->status = $status;
+
+        return $cart;
     }
 
-    public function createCart(): Cart
+    public function deleteCart(int $id_user): void
     {
-        $user = auth('sanctum')->user();
-        return $this->cartRepository->createCart([
-            'id_user' => $user->id_user,
-            'total' => 0,
-            'status' => 'active',
-        ]);
+        $cart = $this->cartRepository->findByUserId($id_user);
+        $this->cartRepository->updateCart($cart->id_cart, ['status' => CartStatus::CANCELLED->value]);
     }
 
-    public function updateCart(Cart $cart, array $data): Cart
-    {
-        return DB::transaction(function () use ($cart, $data) {
-            $cart->update($data);
-            return $cart;
-        });
-    }
-    public function deleteCart(Cart $cart): void
-    {
-        $cart->delete();
-    }
     public function recalculateTotal(Cart $cart): void
     {
         $total = $cart->cartDetails()->sum('subtotal');
-        $cart->update(['total' => $total]);
+        $this->cartRepository->updateCart($cart->id_cart, ['total' => $total]);
     }
 }

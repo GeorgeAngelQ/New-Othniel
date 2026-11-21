@@ -2,99 +2,79 @@
 
 namespace App\Services;
 
-use App\Models\Cart;
 use App\Models\CartDetail;
-use App\Models\Product;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Collection;
-use App\Exceptions\BusinessRules\NotFoundException;
 use App\Exceptions\BusinessRules\BusinessException;
-
-use App\Repository\CartRepository;
+use App\Models\Cart;
 use App\Repository\CartDetailRepository;
 use App\Repository\ProductRepository;
+use App\Repository\LvlTransactionManager;
 
 class CartDetailService
 {
-    public CartRepository $cartRepository;
-    public CartDetailRepository $cartDetailRepository;
-    public ProductRepository $productRepository;
+    private CartDetailRepository $cartDetailRepository;
+    private ProductRepository $productRepository;
+    private LvlTransactionManager $transactionManager;
 
     public function __construct(
-        CartRepository $cartRepository,
         CartDetailRepository $cartDetailRepository,
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        LvlTransactionManager $transactionManager
     ) {
-        $this->cartRepository = $cartRepository;
         $this->cartDetailRepository = $cartDetailRepository;
         $this->productRepository = $productRepository;
+        $this->transactionManager = $transactionManager;
     }
 
-    public function findOrCreateCartByUserId(int $id_user): int
+    public function addProductToCart(Cart $cart, int $id_product, int $quantity)
     {
-        if ($this->cartRepository->findByUserId($id_user)) {
-            $cart = $this->cartRepository->findByUserId($id_user);
-        } else {
-            $cart = $this->cartRepository->createCart([
-                'id_user' => $id_user,
-                'total' => 0,
-                'status' => 'active',
-            ]);
+        return $this->transactionManager->transaction(
+            function () use ($cart, $id_product, $quantity)
+            {
+                $product = $this->productRepository->findById($id_product);
+                $productCartDetail = $this->cartDetailRepository->findByCartIdAndProductId($cart->id_cart, $id_product);
+                if ($productCartDetail-> quantity + $quantity > $product->stock) throw new BusinessException('Product ' . $product->name . ' has insufficient stock');
+                if ($productCartDetail) {
+                    $this->cartDetailRepository->update($productCartDetail,[
+                        'quantity' => $productCartDetail->quantity + $quantity,
+                        'unit_price' => $productCartDetail->unit_price,
+                        'subtotal' => ($productCartDetail->quantity + $quantity) * $productCartDetail->unit_price,
+                    ]);
+                } else{
+                    $this->cartDetailRepository->create([
+                        'id_cart' => $cart->id_cart,
+                        'id_product' => $id_product,
+                        'quantity' => $quantity,
+                        'unit_price' => $product->price,
+                        'subtotal' => $quantity * $product->price
+                    ]);
+                }
+            }
+        );
+    }
+
+    public function updateQuantity(int $id_cart, int $id_product, int $quantity): CartDetail
+    {
+        return $this->transactionManager->transaction(
+            function () use ($id_cart, $id_product, $quantity) {
+                $productCartDetail = $this->cartDetailRepository->findByCartIdAndProductId($id_cart, $id_product);
+                $product = $this->productRepository->findById($id_product);
+                if ($quantity > $product->stock) {
+                    throw new BusinessException('Product ' . $product->name . ' has insufficient stock.');
+                }
+                $this->cartDetailRepository->update($productCartDetail, [
+                    'quantity' => $quantity,
+                    'subtotal' => $quantity * $productCartDetail->unit_price,
+                ]);
+                return $productCartDetail;
+            });
+    }
+
+    public function delete(int $id_cart, int $id_product): void
+    {
+        $cartDetail = $this->cartDetailRepository->findByCartIdAndProductId($id_cart, $id_product);
+        if ($cartDetail !== null) {
+            $this->cartDetailRepository->delete($cartDetail->id_cart_detail);
         }
-        $id_cart = $cart->id_cart;
-        return $id_cart;
     }
 
-    public function addProductToCart(int $id_cart, int $id_product, int $quantity)
-    {
-        $product = $this->productRepository->findById($id_product);
-        if (!$product) throw new NotFoundException('Product not found');
-        if ($product-> stock < $quantity) throw new BusinessException('Product ' . $product->name . ' has insufficient stock');
-
-        $cartItem = $this->cartDetailRepository->findByCartIdAndProductId($id_cart, $id_product);
-        if (!$cartItem) throw new NotFoundException('Product not found in cart');
-
-        
-
-
-    }
-
-
-    public function updateCartDetail(CartDetail $cartDetail, array $data): CartDetail
-    {
-        return DB::transaction(function () use ($cartDetail, $data) {
-            if (isset($data['quantity'])) {
-                $cartDetail->quantity = $data['quantity'];
-                $cartDetail->subtotal = $cartDetail->quantity * $cartDetail->unit_price;
-            }
-            $cartDetail->save();
-            $cart = $cartDetail->cart ?? Cart::find($cartDetail->id_cart);
-            if ($cart) {
-                $this->updateCartTotal($cart);
-            }
-            return $cartDetail->refresh();
-        });
-    }
-
-    public function removeCartDetail(CartDetail $cartDetail): void
-    {
-        DB::transaction(function () use ($cartDetail) {
-            $cart = $cartDetail->cart;
-            $cartDetail->delete();
-            if ($cart) {
-                $this->updateCartTotal($cart);
-            }
-        });
-    }
-    public function getCartDetails(int $id_cart): Collection
-    {
-        return CartDetail::with('product')
-            ->where('id_cart', $id_cart)
-            ->get();
-    }
-    private function updateCartTotal(Cart $cart): void
-    {
-        $total = $cart->cartDetails()->sum('subtotal');
-        $cart->update(['total' => $total]);
-    }
 }
