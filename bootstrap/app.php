@@ -4,11 +4,14 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Throwable;
 
-use App\Exceptions\AppExceptionMapper;
 use App\Http\Middleware\RoleMiddleware;
+use App\Exceptions\ApiExceptionMapper;
 use App\Exceptions\ApiErrorResponse;
+use App\Exceptions\BadRequest\BadRequestException;
+use App\Exceptions\BusinessRules\BusinessException;
+use App\Exceptions\BusinessRules\NotFoundException;
+use Psr\Log\LogLevel;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,8 +27,21 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 
+        $exceptions->dontReport([NotFoundException::class]);
+        $exceptions->level(BusinessException::class, LogLevel::INFO);
+        $exceptions->level(BadRequestException::class, LogLevel::WARNING);
+
+        $exceptions->context(fn () => [
+            'request_id' => request()->attributes->get('request_id'),
+            'user_id' => auth('sanctum')->id(),
+            'route' => request()->route()?->getName() ?? request()->path(),
+            'method' => request()->method(),
+        ]);
+
+        $exceptions->dontReportDuplicates();
+
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request, Throwable $e) =>
+            fn (Request $request) =>
                 $request->is('api/*') || $request->expectsJson()
         );
 
@@ -35,7 +51,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
-            $mapped = AppExceptionMapper::map($e);
+            $mapped = ApiExceptionMapper::map($e);
 
             return ApiErrorResponse::make($mapped);
         });
