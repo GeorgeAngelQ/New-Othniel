@@ -10,9 +10,8 @@ class BadRequestException extends RuntimeException
 {
     public function __construct(
         string $message,
-        private readonly array $errors,
-        private readonly array $context,
-        Throwable $previous)
+        private readonly array $errors = [],
+        Throwable $previous = null)
     {
         parent::__construct($message, 400, $previous);
     }
@@ -25,10 +24,5 @@ class BadRequestException extends RuntimeException
     public function errors(): array
     {
         return $this->errors;
-    }
-
-    public function context(): array
-    {
-        return $this->context;
     }
 }
