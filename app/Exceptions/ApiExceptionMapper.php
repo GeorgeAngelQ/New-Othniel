@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
-class AppExceptionMapper
+class ApiExceptionMapper
 {
     public static function map(Throwable $e): array
     {
@@ -44,13 +44,12 @@ class AppExceptionMapper
                 'error_code' => $e->errorType()->value,
                 'message' => __('validation.bad_request'),
                 'records' => $e->errors(),
-                'context' => $e->context(),
             ],
             $e instanceof ValidationException => [
                 'status' => ErrorType::VALIDATION->status(),
                 'error_code' => ErrorType::VALIDATION->value,
                 'message' => __('validation.failed'),
-                'errors' => $e->errors(),
+                'fields' => $e->errors(),
             ],
 
 
@@ -86,11 +85,15 @@ class AppExceptionMapper
                 'error_code' => ErrorType::METHOD_NOT_ALLOWED->value,
                 'message' => __('general.method_not_allowed'),
             ],
-            $e instanceof HttpExceptionInterface => [
-                'status' => $e->getStatusCode(),
-                'error_code' => ErrorType::INTERNAL->value,
-                'message' => $e->getMessage(),
-            ],
+            $e instanceof HttpExceptionInterface => (function () use ($e) {
+                $type = ErrorType::fromHttpStatus($e->getStatusCode());
+                return [
+                    'status' => $type->status(),
+                    'error_code' => $type->value,
+                    'message' => __('general.'. strtolower($type->value)),
+                    'headers' => $e->getHeaders()
+                ];
+            })(),
 
             // ================= FALLBACK =================
             default => [

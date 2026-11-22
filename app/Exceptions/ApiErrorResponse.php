@@ -11,7 +11,7 @@ class ApiErrorResponse
         $payload = [
             'success' => false,
             'status' => $data['status'],
-            'error_code' => $data['error_code'] ?? 'Código no mapeado',
+            'error_code' => $data['error_code'],
             'message' => $data['message'] ?? self::resolveMessage($data['message_key'] ?? null),
         ];
 
@@ -27,12 +27,8 @@ class ApiErrorResponse
             $payload['context'] = $data['context'];
         }
 
-        if (!empty($data['origin'])){
-            $payload['origin'] = $data['origin'];
-        }
-
-        if (!empty($data['code'])){
-            $payload['code'] = $data['code'];
+        if(!empty($data['headers'])){
+            $payload['headers'] = $data['headers'];
         }
 
         if ($isDebug && !empty($data['_debug'])){
